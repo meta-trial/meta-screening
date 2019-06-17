@@ -32,8 +32,6 @@ setup(
     zip_safe=False,
     keywords='django meta edc',
     install_requires=[
-        'django-collect-offline',
-        'django-collect-offline-files',
         'edc-action-item',
         'edc-appointment',
         'edc-consent',
