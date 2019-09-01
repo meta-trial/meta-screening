@@ -1,0 +1,4 @@
+[run]
+include = meta_screening/*
+omit = meta_screening/tests/*
+branch = 1
