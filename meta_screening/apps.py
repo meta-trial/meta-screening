@@ -5,7 +5,7 @@ from edc_facility.apps import AppConfig as BaseEdcFacilityAppConfig
 
 class AppConfig(DjangoApponfig):
     name = "meta_screening"
-    verbose_name = "Meta Subject Screening"
+    verbose_name = "META Screening"
     screening_age_adult_upper = 99
     screening_age_adult_lower = 18
     include_in_administration_section = True
@@ -17,7 +17,7 @@ if settings.APP_NAME == "meta_screening":
     from dateutil.relativedelta import MO, TU, WE, TH, FR, SA, SU
 
     class EdcFacilityAppConfig(BaseEdcFacilityAppConfig):
-        country = "botswana"
+        country = "tanzania"
         definitions = {
             "7-day clinic": dict(
                 days=[MO, TU, WE, TH, FR, SA, SU],

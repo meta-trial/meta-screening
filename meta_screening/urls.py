@@ -7,6 +7,5 @@ app_name = "meta_screening"
 
 urlpatterns = [
     path("admin/", meta_screening_admin.urls),
-    path("", RedirectView.as_view(
-        url="/meta_screening/admin/"), name="home_url"),
+    path("", RedirectView.as_view(url="/meta_screening/admin/"), name="home_url"),
 ]

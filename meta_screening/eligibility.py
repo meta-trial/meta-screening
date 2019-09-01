@@ -1,106 +1,220 @@
-# from .early_withdrawal_evaluator import EarlyWithdrawalEvaluator
-from .gender_evaluator import GenderEvaluator
-from .reportables import age_evaluator
+from django.utils.safestring import mark_safe
+from edc_constants.constants import FEMALE, MALE, YES, TBD, NO
 
 
-class EligibilityError(Exception):
+class SubjectScreeningEligibilityError(Exception):
     pass
 
 
-class Eligibility:
-
-    """Eligible if all criteria evaluate True.
-
-    Any key in `additional_criteria` has value True if eligible.
+def check_eligible_final(obj):
+    """Updates model instance fields `eligible` and `reasons_ineligible`.
     """
+    reasons_ineligible = []
 
-    gender_evaluator_cls = GenderEvaluator
-    # early_withdrawal_evaluator_cls = EarlyWithdrawalEvaluator
-    age_evaluator = age_evaluator
+    if obj.unsuitable_for_study == YES:
+        obj.eligible = False
+        reasons_ineligible.append("Subject unsuitable")
+    else:
+        obj.eligible = True if calculate_eligible_final(obj) == YES else False
 
-    def __init__(
-        self,
-        age=None,
-        gender=None,
-        pregnant=None,
-        breast_feeding=None,
-        alt=None,
-        neutrophil=None,
-        platelets=None,
-        allow_none=None,
-        subject_screening=None,
-        **additional_criteria,
-    ):
-
-        self.criteria = dict(**additional_criteria)
-        if len(self.criteria) == 0:
-            raise EligibilityError("No criteria provided.")
-
-        self.gender_evaluator = self.gender_evaluator_cls(
-            gender=gender, pregnant=pregnant, breast_feeding=breast_feeding
-        )
-#         self.early_withdrawal_evaluator = self.early_withdrawal_evaluator_cls(
-#             alt=alt,
-#             neutrophil=neutrophil,
-#             platelets=platelets,
-#             allow_none=allow_none,
-#             subject_screening=subject_screening,
-#         )
-        self.criteria.update(age=self.age_evaluator.eligible(age))
-        self.criteria.update(gender=self.gender_evaluator.eligible)
-        self.criteria.update(
-            early_withdrawal=self.early_withdrawal_evaluator.eligible)
-
-        # eligible if all criteria are True
-        self.eligible = all([v for v in self.criteria.values()])
-        if self.eligible:
-            self.reasons_ineligible = None
+    if obj.eligible:
+        obj.reasons_ineligible = None
+    else:
+        if obj.reasons_ineligible_part_one:
+            reasons_ineligible.append(obj.reasons_ineligible_part_one)
+        if obj.reasons_ineligible_part_two:
+            reasons_ineligible.append(obj.reasons_ineligible_part_two)
+        if obj.reasons_ineligible_part_three:
+            reasons_ineligible.append(obj.reasons_ineligible_part_three)
+        if reasons_ineligible:
+            obj.reasons_ineligible = "|".join(reasons_ineligible)
         else:
-            self.reasons_ineligible = {k: v for k,
-                                       v in self.criteria.items() if not v}
-            for k, v in self.criteria.items():
-                if not v:
-                    if k in self.custom_reasons_dict:
-                        self.reasons_ineligible.update(
-                            {k: self.custom_reasons_dict.get(k)}
-                        )
-                    elif k not in ["age", "gender", "early_withdrawal"]:
-                        self.reasons_ineligible.update({k: k})
-            if not self.age_evaluator.eligible(age):
-                self.reasons_ineligible.update(
-                    age=self.age_evaluator.reasons_ineligible
-                )
-            if not self.gender_evaluator.eligible:
-                self.reasons_ineligible.update(
-                    gender=f"{' and '.join(self.gender_evaluator.reasons_ineligible)}."
-                )
-            if not self.early_withdrawal_evaluator.eligible:
-                self.reasons_ineligible.update(
-                    {**self.early_withdrawal_evaluator.reasons_ineligible}
-                )
+            obj.reasons_ineligible = None
 
-    def __str__(self):
-        return self.eligible
 
-    @property
-    def custom_reasons_dict(self):
-        """Returns a dictionary of custom reasons for named criteria.
-        """
-        custom_reasons_dict = dict(
-            no_drug_reaction="Previous adverse drug reaction to the study medication.",
-            no_concomitant_meds="Patient on contraindicated medication.",
-            meningitis_dx="Previous Hx of Cryptococcal Meningitis.",
-            no_amphotericin="> 0.7mg/kg of Amphotericin B.",
-            no_fluconazole="> 48hrs of Fluconazole.",
-            will_hiv_test="HIV unknown or unwilling to test.",
-            consent_ability="Not able or unwilling to give ICF.",
-            not_suitable="Patient unsuitable for study.",
-        )
-        for k in custom_reasons_dict:
-            if k in custom_reasons_dict and k not in self.criteria:
-                raise EligibilityError(
-                    f"Custom reasons refer to invalid named criteria, Got '{k}'. "
-                    f"Expected one of {list(self.criteria)}. "
-                    f"See {repr(self)}."
-                )
-        return custom_reasons_dict
+def calculate_eligible_final(obj):
+    """Returns YES, NO or TBD.
+    """
+    eligible_final = NO
+    valid_opts = [YES, NO, TBD]
+    if any(
+        [
+            obj.eligible_part_one not in valid_opts,
+            obj.eligible_part_two not in valid_opts,
+            obj.eligible_part_three not in valid_opts,
+        ]
+    ):
+        opts = [
+            obj.eligible_part_one,
+            obj.eligible_part_two,
+            obj.eligible_part_three,
+        ]
+        raise SubjectScreeningEligibilityError(
+            f"Invalid value for eligible. Got {opts}")
+    if any(
+        [
+            obj.eligible_part_one == TBD,
+            obj.eligible_part_two == TBD,
+            obj.eligible_part_three == TBD,
+        ]
+    ):
+        eligible_final = TBD
+    if all(
+        [
+            obj.eligible_part_one == YES,
+            obj.eligible_part_two == YES,
+            obj.eligible_part_three == YES,
+        ]
+    ):
+        eligible_final = YES
+    return eligible_final
+
+
+def calculate_eligible_part_one(obj):
+    """Updates model instance fields `eligible_part_one`
+    and `reasons_ineligible_part_one`.
+    """
+    reasons_ineligible = []
+    # TODO: need a time frame for the validity of the pregnancy test
+    preg_test_ok = False
+    if obj.gender == MALE:
+        pass
+    else:
+        if obj.pregnant == NO and obj.preg_test_date:
+            preg_test_ok = True
+    if obj.consent_ability == NO:
+        reasons_ineligible.append("Unable/unwilling to consent")
+    if obj.gender not in [MALE, FEMALE]:
+        reasons_ineligible.append("gender invalid")
+    if obj.age_in_years < 18:
+        reasons_ineligible.append("age<18")
+    if obj.hiv_pos == NO:
+        reasons_ineligible.append("not HIV+")
+    if obj.art_six_months == NO:
+        reasons_ineligible.append("ART<6m")
+    if obj.on_rx_stable == NO:
+        reasons_ineligible.append("ART not stable")
+    if obj.lives_nearby == NO:
+        reasons_ineligible.append("Not living nearby")
+    if obj.staying_nearby == NO:
+        reasons_ineligible.append("Unable/Unwilling to stay nearby")
+    if (obj.pregnant == NO and not preg_test_ok) or (obj.pregnant == YES):
+        reasons_ineligible.append("Pregnant or no UPT")
+    eligible = NO if reasons_ineligible else YES
+    obj.eligible_part_one = eligible
+    obj.reasons_ineligible_part_one = "|".join(reasons_ineligible)
+
+
+def calculate_eligible_part_two(obj):
+    """Updates model instance fields `eligible_part_two`
+    and `reasons_ineligible_part_two`.
+    """
+    reasons_ineligible = []
+
+    fields = [
+        "congestive_heart_failure",
+        "liver_disease",
+        "alcoholism",
+        "acute_metabolic_acidosis",
+        "renal_function_condition",
+        "tissue_hypoxia_condition",
+        "acute_condition",
+        "metformin_sensitivity",
+    ]
+
+    responses = {}
+    for field in fields:
+        responses.update({field: getattr(obj, field)})
+    for k, v in responses.items():
+        if v == YES:
+            reasons_ineligible.append(k.title().replace("_", " "))
+    if not reasons_ineligible and obj.advised_to_fast == NO:
+        reasons_ineligible.append("Not advised to fast")
+    if not reasons_ineligible and not obj.appt_datetime:
+        reasons_ineligible.append("Not scheduled for stage 2")
+    eligible = NO if reasons_ineligible else YES
+    obj.eligible_part_two = eligible
+    obj.reasons_ineligible_part_two = "|".join(reasons_ineligible)
+
+
+def calculate_eligible_part_three(obj):
+    """Updates model instance fields `eligible_part_three`
+    and `reasons_ineligible_part_three`.
+    """
+    reasons_ineligible = []
+
+    # BMI>30 combined with impaired fasting glucose (6.1 to 6.9 mmol/L)
+    if (
+        obj.calculated_bmi > 30.0
+        and obj.fasting_glucose >= 6.1
+        and obj.fasting_glucose <= 6.9
+    ):
+        obj.inclusion_a = YES
+    else:
+        obj.inclusion_a = NO
+
+    # BMI>30 combined with impaired glucose tolerance at
+    # 2 hours (7.0 to 11.10 mmol/L)
+    if (
+        obj.calculated_bmi > 30.0
+        and obj.converted_ogtt_two_hr >= 7.0
+        and obj.converted_ogtt_two_hr <= 11.10
+    ):
+        obj.inclusion_b = YES
+    else:
+        obj.inclusion_b = NO
+
+    # BMI<=30 combined with impaired fasting glucose (6.3 to 6.9 mmol/L)
+    if (
+        obj.calculated_bmi <= 30.0
+        and obj.fasting_glucose >= 6.3
+        and obj.fasting_glucose <= 6.9
+    ):
+        obj.inclusion_c = YES
+    else:
+        obj.inclusion_c = NO
+
+    # BMI<=30 combined with impaired glucose tolerance at 2 hours
+    # (9.0 to 11.10 mmol/L)
+    if (
+        obj.calculated_bmi <= 30.0
+        and obj.converted_ogtt_two_hr >= 9.0
+        and obj.converted_ogtt_two_hr <= 11.10
+    ):
+        obj.inclusion_d = YES
+    else:
+        obj.inclusion_d = NO
+
+    if any(
+        [
+            obj.inclusion_a == TBD,
+            obj.inclusion_b == TBD,
+            obj.inclusion_c == TBD,
+            obj.inclusion_d == TBD,
+        ]
+    ):
+        raise SubjectScreeningEligibilityError(
+            "Part 3 inclusion criteria incomplete")
+    if all(
+        [
+            obj.inclusion_a == NO,
+            obj.inclusion_b == NO,
+            obj.inclusion_c == NO,
+            obj.inclusion_d == NO,
+        ]
+    ):
+        reasons_ineligible.append("BMI/IFT/OGTT")
+    if obj.calculated_egfr < 45.0:
+        reasons_ineligible.append("eGFR<45")
+    eligible = NO if reasons_ineligible else YES
+    obj.eligible_part_three = eligible
+    obj.reasons_ineligible_part_three = "|".join(reasons_ineligible)
+
+
+def format_reasons_ineligible(*str_values):
+    reasons = None
+    str_values = [x for x in str_values if x is not None]
+    if str_values:
+        str_values = "".join(str_values)
+        reasons = mark_safe(str_values.replace("|", "<BR>"))
+    return reasons

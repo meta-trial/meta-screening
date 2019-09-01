@@ -1,13 +1,13 @@
 from django import forms
 from edc_form_validators import FormValidatorMixin
 
-from ..form_validators import SubjectScreeningFormValidator
+from ..form_validators import ScreeningPartTwoFormValidator
 from ..models import SubjectScreening
 
 
-class SubjectScreeningForm(FormValidatorMixin, forms.ModelForm):
+class ScreeningPartTwoForm(FormValidatorMixin, forms.ModelForm):
 
-    form_validator_cls = SubjectScreeningFormValidator
+    form_validator_cls = ScreeningPartTwoFormValidator
 
     def clean(self):
         cleaned_data = super().clean()
