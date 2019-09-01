@@ -3,7 +3,6 @@ from edc_constants.constants import YES, NO
 from edc_form_validators import FormValidator
 from edc_reportable import NormalReference
 from edc_reportable.units import MICROMOLES_PER_LITER
-import pdb
 
 
 gluc_fasting_ref = NormalReference(
@@ -43,8 +42,6 @@ class SubjectScreeningFormValidator(FormValidator):
         self.required_if(YES, field="advised_to_fast", field_required="appt_datetime")
 
         self.required_if(YES, field="fasted", field_required="fasted_duration_str")
-
-        pdb.set_trace()
 
         self.applicable_if(
             YES,
