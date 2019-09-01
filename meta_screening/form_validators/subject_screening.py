@@ -32,29 +32,31 @@ gluc_2hr_ref = NormalReference(
 
 
 class SubjectScreeningFormValidator(FormValidator):
-
     def clean(self):
 
         self.not_applicable_if(
-            MALE, field="gender", field_applicable="pregnant", inverse=False)
+            MALE, field="gender", field_applicable="pregnant", inverse=False
+        )
 
-        self.required_if(
-            YES, field="pregnant", field_required="preg_test_date")
+        self.required_if(YES, field="pregnant", field_required="preg_test_date")
 
-        self.required_if(
-            YES, field="advised_to_fast", field_required="appt_datetime")
+        self.required_if(YES, field="advised_to_fast", field_required="appt_datetime")
 
-        self.required_if(
-            YES, field="fasted", field_required="fasted_duration_str")
+        self.required_if(YES, field="fasted", field_required="fasted_duration_str")
 
         pdb.set_trace()
 
         self.applicable_if(
-            YES, NO, field="pregnant", field_required="urine_bhcg",
-            is_instance_field=True)
+            YES,
+            NO,
+            field="pregnant",
+            field_required="urine_bhcg",
+            is_instance_field=True,
+        )
 
         self.required_if(
-            YES, field="unsuitable_for_study", field_required="reasons_unsuitable")
+            YES, field="unsuitable_for_study", field_required="reasons_unsuitable"
+        )
 
 
 #         opt = dict(
