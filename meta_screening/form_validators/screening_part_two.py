@@ -1,5 +1,4 @@
-from edc_constants.constants import FEMALE, MALE
-from edc_constants.constants import YES, NO
+from edc_constants.constants import YES
 from edc_form_validators import FormValidator
 
 from ..eligibility import part2_fields
