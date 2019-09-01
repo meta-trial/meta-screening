@@ -1,12 +1,11 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django_audit_fields.admin import audit_fieldset_tuple
-from edc_constants.constants import TBD
 from edc_model_admin import SimpleHistoryAdmin
 from edc_model_admin.dashboard import ModelAdminSubjectDashboardMixin
 
 from ..admin_site import meta_screening_admin
-from ..eligibility import format_reasons_ineligible
+from ..eligibility import format_reasons_ineligible, eligibility_status
 from ..forms import SubjectScreeningForm
 from ..models import SubjectScreening
 from .fieldsets import (
@@ -116,21 +115,4 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
         return format_reasons_ineligible(obj.reasons_ineligible)
 
     def eligiblity_status(self, obj=None):
-        status_str = (
-            f"P1: {obj.eligible_part_one.upper()}<BR>"
-            f"P2: {obj.eligible_part_two.upper()}<BR>"
-            f"P3: {obj.eligible_part_three.upper()}<BR>"
-        )
-
-        if obj.eligible:
-            status_str = status_str + '<font color="green"><B>ELIGIBLE</B></font>'
-        elif TBD in [
-            obj.eligible_part_one,
-            obj.eligible_part_two,
-            obj.eligible_part_three,
-        ]:
-            status_str = status_str + '<font color="orange"><B>PENDING</B></font>'
-        else:
-            status_str = status_str + "<B>not eligible</B>"
-
-        return mark_safe(status_str)
+        return mark_safe(eligibility_status(obj))

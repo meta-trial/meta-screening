@@ -1,15 +1,9 @@
-from django.core.validators import (
-    MinValueValidator,
-    MaxValueValidator,
-)
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_model.validators import hm_validator
 
-from ..choices import (
-    OGTT_UNITS,
-    SERUM_CREATININE_UNITS,
-)
+from ..choices import OGTT_UNITS, SERUM_CREATININE_UNITS
 
 
 class PartThreeFieldsModelMixin(models.Model):

@@ -1,6 +1,7 @@
 from django.db import models
 from edc_constants.choices import YES_NO
 from edc_constants.constants import NOT_APPLICABLE
+from edc_model.validators import datetime_is_future
 
 from ..choices import YES_NO_NOT_ELIGIBLE
 
@@ -127,6 +128,7 @@ class PartTwoFieldsModelMixin(models.Model):
 
     appt_datetime = models.DateTimeField(
         verbose_name="Appointment date for second stage of screening",
+        validators=[datetime_is_future],
         null=True,
         blank=True,
     )

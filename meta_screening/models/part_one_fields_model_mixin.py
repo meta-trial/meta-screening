@@ -24,15 +24,11 @@ class PartOneFieldsModelMixin(models.Model):
     )
 
     ethnicity = models.CharField(
-        max_length=15,
-        choices=ETHNICITY,
-        help_text="Used for eGFR calculation",
+        max_length=15, choices=ETHNICITY, help_text="Used for eGFR calculation"
     )
 
     hiv_pos = models.CharField(
-        verbose_name="Is the patient HIV positive",
-        max_length=15,
-        choices=YES_NO,
+        verbose_name="Is the patient HIV positive", max_length=15, choices=YES_NO
     )
 
     art_six_months = models.CharField(
@@ -70,9 +66,7 @@ class PartOneFieldsModelMixin(models.Model):
     )
 
     pregnant = models.CharField(
-        verbose_name="Is the patient pregnant?",
-        max_length=15,
-        choices=PREG_YES_NO_NA,
+        verbose_name="Is the patient pregnant?", max_length=15, choices=PREG_YES_NO_NA
     )
 
     preg_test_date = models.DateTimeField(

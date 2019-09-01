@@ -6,6 +6,18 @@ class SubjectScreeningEligibilityError(Exception):
     pass
 
 
+part2_fields = [
+    "congestive_heart_failure",
+    "liver_disease",
+    "alcoholism",
+    "acute_metabolic_acidosis",
+    "renal_function_condition",
+    "tissue_hypoxia_condition",
+    "acute_condition",
+    "metformin_sensitivity",
+]
+
+
 def check_eligible_final(obj):
     """Updates model instance fields `eligible` and `reasons_ineligible`.
     """
@@ -44,13 +56,10 @@ def calculate_eligible_final(obj):
             obj.eligible_part_three not in valid_opts,
         ]
     ):
-        opts = [
-            obj.eligible_part_one,
-            obj.eligible_part_two,
-            obj.eligible_part_three,
-        ]
+        opts = [obj.eligible_part_one, obj.eligible_part_two, obj.eligible_part_three]
         raise SubjectScreeningEligibilityError(
-            f"Invalid value for eligible. Got {opts}")
+            f"Invalid value for eligible. Got {opts}"
+        )
     if any(
         [
             obj.eligible_part_one == TBD,
@@ -111,19 +120,8 @@ def calculate_eligible_part_two(obj):
     """
     reasons_ineligible = []
 
-    fields = [
-        "congestive_heart_failure",
-        "liver_disease",
-        "alcoholism",
-        "acute_metabolic_acidosis",
-        "renal_function_condition",
-        "tissue_hypoxia_condition",
-        "acute_condition",
-        "metformin_sensitivity",
-    ]
-
     responses = {}
-    for field in fields:
+    for field in part2_fields:
         responses.update({field: getattr(obj, field)})
     for k, v in responses.items():
         if v == YES:
@@ -193,8 +191,7 @@ def calculate_eligible_part_three(obj):
             obj.inclusion_d == TBD,
         ]
     ):
-        raise SubjectScreeningEligibilityError(
-            "Part 3 inclusion criteria incomplete")
+        raise SubjectScreeningEligibilityError("Part 3 inclusion criteria incomplete")
     if all(
         [
             obj.inclusion_a == NO,
@@ -218,3 +215,26 @@ def format_reasons_ineligible(*str_values):
         str_values = "".join(str_values)
         reasons = mark_safe(str_values.replace("|", "<BR>"))
     return reasons
+
+
+def eligibility_status(obj):
+    status_str = (
+        f"P1: {obj.eligible_part_one.upper()}<BR>"
+        f"P2: {obj.eligible_part_two.upper()}<BR>"
+        f"P3: {obj.eligible_part_three.upper()}<BR>"
+    )
+
+    display_label = eligibility_display_label(obj)
+
+    return status_str + display_label
+
+
+def eligibility_display_label(obj):
+    responses = [obj.eligible_part_one, obj.eligible_part_two, obj.eligible_part_three]
+    if obj.eligible:
+        display_label = '<font color="green"><B>ELIGIBLE</B></font>'
+    elif TBD in responses and NO not in responses:
+        display_label = '<font color="orange"><B>PENDING</B></font>'
+    else:
+        display_label = "<B>not eligible</B>"
+    return display_label
