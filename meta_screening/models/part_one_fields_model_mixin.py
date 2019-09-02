@@ -4,7 +4,7 @@ from django.core.validators import (
     MinLengthValidator,
     RegexValidator,
 )
-from edc_constants.choices import PREG_YES_NO_NA, YES_NO, YES_NO_NA
+from edc_constants.choices import PREG_YES_NO_UNCONFIRMED_NA, YES_NO, YES_NO_NA
 
 from ..choices import ETHNICITY
 
@@ -64,7 +64,9 @@ class PartOneFieldsModelMixin(models.Model):
     )
 
     pregnant = models.CharField(
-        verbose_name="Is the patient pregnant?", max_length=15, choices=PREG_YES_NO_NA
+        verbose_name="Is the patient pregnant?",
+        max_length=15,
+        choices=PREG_YES_NO_UNCONFIRMED_NA,
     )
 
     preg_test_date = models.DateTimeField(
