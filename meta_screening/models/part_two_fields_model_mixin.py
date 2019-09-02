@@ -56,13 +56,13 @@ class PartTwoFieldsModelMixin(models.Model):
 
     acute_metabolic_acidosis = models.CharField(
         verbose_name=(
-            "Does the patient have any signs or symptoms of acute metabolic acidosis "
-            "(lactic acidosis and/or diabetic ketoacidosis)"
+            "Does the patient have any signs or symptoms of acute metabolic acidosis"
         ),
         max_length=15,
         choices=YES_NO,
         null=True,
         blank=False,
+        help_text="lactic acidosis and/or diabetic ketoacidosis",
     )
     renal_function_condition = models.CharField(
         verbose_name=(
