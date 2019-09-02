@@ -53,7 +53,7 @@ class PartThreeFieldsModelMixin(models.Model):
     )
 
     urine_bhcg = models.CharField(
-        verbose_name="Urine BHCG",
+        verbose_name="Urine βhCG",
         max_length=15,
         choices=YES_NO_NA,
         null=True,

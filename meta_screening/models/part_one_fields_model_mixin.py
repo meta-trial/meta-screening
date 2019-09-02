@@ -40,12 +40,10 @@ class PartOneFieldsModelMixin(models.Model):
     )
 
     on_rx_stable = models.CharField(
-        verbose_name=(
-            "Is the patient considered to be stable on treatment "
-            "(in regular attendance for care)"
-        ),
+        verbose_name=("Is the patient considered to be stable on treatment "),
         max_length=15,
         choices=YES_NO_NA,
+        help_text="in regular attendance for care",
     )
 
     lives_nearby = models.CharField(
