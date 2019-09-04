@@ -1,11 +1,14 @@
 from django import forms
 from edc_form_validators import FormValidatorMixin
+from edc_screening.modelform_mixins import AlreadyConsentedFormMixin
 
 from ..form_validators import SubjectScreeningFormValidator
 from ..models import SubjectScreening
 
 
-class SubjectScreeningForm(FormValidatorMixin, forms.ModelForm):
+class SubjectScreeningForm(
+    AlreadyConsentedFormMixin, FormValidatorMixin, forms.ModelForm
+):
 
     form_validator_cls = SubjectScreeningFormValidator
 

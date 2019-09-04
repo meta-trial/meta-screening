@@ -27,6 +27,9 @@ class ScreeningPartOneAdmin(SubjectScreeningAdmin):
     readonly_fields = (
         # part two
         "part_two_report_datetime",
+        "urine_bhcg_performed",
+        "urine_bhcg",
+        "urine_bhcg_date",
         "congestive_heart_failure",
         "liver_disease",
         "alcoholism",
@@ -43,7 +46,6 @@ class ScreeningPartOneAdmin(SubjectScreeningAdmin):
         "height",
         "fasted",
         "fasted_duration_str",
-        "urine_bhcg",
         "hba1c",
         "creatinine",
         "creatinine_units",

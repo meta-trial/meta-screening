@@ -102,6 +102,7 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
         "tissue_hypoxia_condition": admin.VERTICAL,
         "unsuitable_for_study": admin.VERTICAL,
         "urine_bhcg": admin.VERTICAL,
+        "urine_bhcg_performed": admin.VERTICAL,
     }
 
     def demographics(self, obj=None):

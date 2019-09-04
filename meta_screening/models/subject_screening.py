@@ -30,6 +30,7 @@ class SubjectScreening(
 ):
 
     identifier_cls = ScreeningIdentifier
+    consent_model = "meta_subject.subjectconsent"
 
     class Meta:
         verbose_name = "Subject Screening"

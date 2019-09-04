@@ -1,5 +1,5 @@
 from django.db import models
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO, POS_NEG_NA, PREG_YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 from edc_model.validators import datetime_is_future
 
@@ -11,8 +11,27 @@ class PartTwoFieldsModelMixin(models.Model):
     part_two_report_datetime = models.DateTimeField(
         verbose_name="Report Date and Time",
         null=True,
-        blank=False,
+        blank=True,
         help_text="Date and time of report.",
+    )
+
+    urine_bhcg_performed = models.CharField(
+        verbose_name="Was a Urine or serum βhCG performed?",
+        max_length=15,
+        choices=PREG_YES_NO_NA,
+        default=NOT_APPLICABLE,
+        help_text="(Pregnancy test)",
+    )
+
+    urine_bhcg = models.CharField(
+        verbose_name="Urine or serum βhCG result",
+        max_length=15,
+        choices=POS_NEG_NA,
+        default=NOT_APPLICABLE,
+    )
+
+    urine_bhcg_date = models.DateField(
+        verbose_name="Urine or serum βhCG date", blank=True, null=True
     )
 
     congestive_heart_failure = models.CharField(

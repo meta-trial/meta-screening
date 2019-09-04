@@ -18,7 +18,6 @@ subjectscreening = Recipe(
     age_in_years=40,
     consent_ability=YES,
     pregnant=NO,
-    preg_test_date=get_utcnow() - relativedelta(days=1),
     site=Site.objects.get_current(),
     part_two_report_datetime=get_utcnow() - relativedelta(days=1),
     congestive_heart_failure=NO,

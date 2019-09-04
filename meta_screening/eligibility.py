@@ -84,13 +84,6 @@ def calculate_eligible_part_one(obj):
     and `reasons_ineligible_part_one`.
     """
     reasons_ineligible = []
-    # TODO: need a time frame for the validity of the pregnancy test
-    preg_test_ok = False
-    if obj.gender == MALE:
-        pass
-    else:
-        if obj.pregnant == NO and obj.preg_test_date:
-            preg_test_ok = True
     if obj.consent_ability == NO:
         reasons_ineligible.append("Unable/unwilling to consent")
     if obj.gender not in [MALE, FEMALE]:
@@ -107,8 +100,8 @@ def calculate_eligible_part_one(obj):
         reasons_ineligible.append("Not living nearby")
     if obj.staying_nearby == NO:
         reasons_ineligible.append("Unable/Unwilling to stay nearby")
-    if (obj.pregnant == NO and not preg_test_ok) or (obj.pregnant == YES):
-        reasons_ineligible.append("Pregnant or no UPT")
+    if obj.pregnant == YES:
+        reasons_ineligible.append("Pregnant (unconfirmed)")
     eligible = NO if reasons_ineligible else YES
     obj.eligible_part_one = eligible
     obj.reasons_ineligible_part_one = "|".join(reasons_ineligible)
