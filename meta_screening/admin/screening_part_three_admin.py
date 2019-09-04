@@ -43,9 +43,11 @@ class ScreeningPartThreeAdmin(SubjectScreeningAdmin):
         "lives_nearby",
         "staying_nearby",
         "pregnant",
-        "preg_test_date",
         # part two
         "part_two_report_datetime",
+        "urine_bhcg_performed",
+        "urine_bhcg",
+        "urine_bhcg_date",
         "congestive_heart_failure",
         "liver_disease",
         "alcoholism",

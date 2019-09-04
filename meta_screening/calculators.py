@@ -4,6 +4,25 @@ from edc_reportable.units import (
     MILLIMOLES_PER_LITER,
     MICROMOLES_PER_LITER,
 )
+from edc_reportable.normal_reference import NormalReference
+from edc_reportable.value_reference_group import ValueReferenceGroup
+from dateutil.relativedelta import relativedelta
+from edc_utils.date import get_utcnow
+
+
+scr_reportable = ValueReferenceGroup(name="scr")
+ref = NormalReference(
+    name="scr",
+    lower=0.2,
+    upper=20.0,
+    lower_inclusive=True,
+    upper_inclusive=True,
+    units=MILLIGRAMS_PER_DECILITER,
+    gender=[MALE, FEMALE],
+    age_lower=18,
+    age_lower_inclusive=True,
+)
+scr_reportable.add_normal(ref)
 
 
 class CalculatorError(Exception):
@@ -55,13 +74,22 @@ def calculate_egfr(obj):
 
 
 class BMI:
+    """Calculate BMI, assume adult.
+    """
+
     def __init__(self, weight_kg=None, height_cm=None):
+        self.lower, self.upper = 10, 30
         self.weight = float(weight_kg)
         self.height = float(height_cm) / 100.0
+        self.bmi = self.weight / (self.height ** 2)
 
     @property
     def value(self):
-        return self.weight / (self.height ** 2)
+        if not (self.lower <= self.bmi <= self.upper):
+            raise CalculatorError(
+                f"BMI value is absurd. Weight(kg), Height(cm). Got {self.bmi}."
+            )
+        return self.bmi
 
 
 class eGFR:
@@ -72,12 +100,38 @@ class eGFR:
     Filtration Rate. Ann Intern Med. 2009; 150:604-612.
     """
 
-    def __init__(self, gender=None, age=None, ethnicity=None, scr=None):
+    def __init__(self, gender=None, age=None, ethnicity=None, scr=None, scr_units=None):
+
+        scr_units = MILLIGRAMS_PER_DECILITER if not scr_units else scr_units
+        if scr_units not in [MILLIGRAMS_PER_DECILITER, MICROMOLES_PER_LITER]:
+            raise CalculatorError(
+                f"Invalid serum creatine units. "
+                f"Expected on of {MILLIGRAMS_PER_DECILITER}, {MICROMOLES_PER_LITER}"
+            )
+        self.scr_units = scr_units
+
+        if not gender or gender not in [MALE, FEMALE]:
+            raise CalculatorError(f"Invalid gender. Expected on of {MALE}, {FEMALE}")
         self.gender = gender
-        if not gender or self.gender not in [MALE, FEMALE]:
-            raise CalculatorError("Invalid gender")
+
+        if not (18 < (age or 0) < 120):
+            raise CalculatorError(
+                f"Invalid age. See {self.__class__.__name__}. Got {age}"
+            )
         self.age = float(age)
+
         self.ethnicity = ethnicity or OTHER
+
+        normal = scr_reportable.get_normal(
+            value=scr,
+            gender=self.gender,
+            units=self.scr_units,
+            dob=get_utcnow() - relativedelta(years=self.age),
+        )
+
+        if not normal:
+            raise CalculatorError(f"Creatinine is abnormal. Got {scr}.")
+
         self.scr = float(scr) / 88.42  # serum creatinine mg/L
 
     @property

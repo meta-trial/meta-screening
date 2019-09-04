@@ -1,6 +1,8 @@
+from django.apps import apps as django_apps
 from edc_constants.constants import MALE
 from edc_constants.constants import YES, NO
 from edc_form_validators import FormValidator
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class ScreeningPartOneFormValidator(FormValidator):
@@ -13,5 +15,3 @@ class ScreeningPartOneFormValidator(FormValidator):
         self.not_applicable_if(
             MALE, field="gender", field_applicable="pregnant", inverse=False
         )
-
-        self.required_if(YES, NO, field="pregnant", field_required="preg_test_date")

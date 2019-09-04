@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from edc_constants.choices import YES_NO, YES_NO_NA
+from edc_constants.choices import YES_NO
 from edc_model.validators import hm_validator
 
 from ..choices import OGTT_UNITS, SERUM_CREATININE_UNITS
@@ -50,15 +50,6 @@ class PartThreeFieldsModelMixin(models.Model):
 
     fasted_duration_minutes = models.IntegerField(
         null=True, help_text="system calculated value"
-    )
-
-    urine_bhcg = models.CharField(
-        verbose_name="Urine βhCG",
-        max_length=15,
-        choices=YES_NO_NA,
-        null=True,
-        blank=False,
-        help_text="(Pregnancy test)",
     )
 
     hba1c = models.DecimalField(

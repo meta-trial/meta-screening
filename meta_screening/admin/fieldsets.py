@@ -18,7 +18,6 @@ def get_part_one_fieldset(collapse=None):
             "lives_nearby",
             "staying_nearby",
             "pregnant",
-            "preg_test_date",
             "consent_ability",
         ),
     }
@@ -31,6 +30,9 @@ def get_part_two_fieldset(collapse=None):
     dct = {
         "description": "To be completed by the study clinician",
         "fields": (
+            "urine_bhcg_performed",
+            "urine_bhcg",
+            "urine_bhcg_date",
             "congestive_heart_failure",
             "liver_disease",
             "alcoholism",
@@ -56,7 +58,6 @@ def get_part_three_fieldset(collapse=None):
             "height",
             "fasted",
             "fasted_duration_str",
-            "urine_bhcg",
             "hba1c",
             "creatinine",
             "creatinine_units",
