@@ -6,6 +6,14 @@ class SubjectScreeningEligibilityError(Exception):
     pass
 
 
+class EligibilityPartOneError(Exception):
+    pass
+
+
+class EligibilityPartThreeError(Exception):
+    pass
+
+
 part2_fields = [
     "congestive_heart_failure",
     "liver_disease",
@@ -56,7 +64,8 @@ def calculate_eligible_final(obj):
             obj.eligible_part_three not in valid_opts,
         ]
     ):
-        opts = [obj.eligible_part_one, obj.eligible_part_two, obj.eligible_part_three]
+        opts = [obj.eligible_part_one,
+                obj.eligible_part_two, obj.eligible_part_three]
         raise SubjectScreeningEligibilityError(
             f"Invalid value for eligible. Got {opts}"
         )
@@ -83,6 +92,24 @@ def calculate_eligible_part_one(obj):
     """Updates model instance fields `eligible_part_one`
     and `reasons_ineligible_part_one`.
     """
+    required_fields = [
+        "consent_ability",
+        "gender",
+        "age_in_years",
+        "hiv_pos",
+        "art_six_months",
+        "on_rx_stable",
+        "lives_nearby",
+        "staying_nearby",
+        "pregnant",
+    ]
+    required_values = [getattr(obj, f) for f in required_fields]
+    if not all(required_values):
+        missing_values = {f: getattr(obj, f)
+                          for f in required_fields if not getattr(obj, f)}
+        raise EligibilityPartOneError(
+            f"Missing required values. Got {missing_values}")
+
     reasons_ineligible = []
     if obj.consent_ability == NO:
         reasons_ineligible.append("Unable/unwilling to consent")
@@ -132,6 +159,20 @@ def calculate_eligible_part_three(obj):
     """Updates model instance fields `eligible_part_three`
     and `reasons_ineligible_part_three`.
     """
+    required_fields = [
+        "calculated_bmi",
+        "calculated_egfr",
+        "fasting_glucose",
+        "inclusion_a",
+        "inclusion_b",
+        "inclusion_c",
+        "inclusion_d",
+        "ogtt_two_hr",
+    ]
+    required_values = [getattr(obj, f) for f in required_fields]
+    if not all(required_values):
+        raise EligibilityPartThreeError
+
     reasons_ineligible = []
 
     # BMI>30 combined with impaired fasting glucose (6.1 to 6.9 mmol/L)
@@ -184,7 +225,8 @@ def calculate_eligible_part_three(obj):
             obj.inclusion_d == TBD,
         ]
     ):
-        raise SubjectScreeningEligibilityError("Part 3 inclusion criteria incomplete")
+        raise SubjectScreeningEligibilityError(
+            "Part 3 inclusion criteria incomplete")
     if all(
         [
             obj.inclusion_a == NO,
@@ -223,7 +265,8 @@ def eligibility_status(obj):
 
 
 def eligibility_display_label(obj):
-    responses = [obj.eligible_part_one, obj.eligible_part_two, obj.eligible_part_three]
+    responses = [obj.eligible_part_one,
+                 obj.eligible_part_two, obj.eligible_part_three]
     if obj.eligible:
         display_label = '<font color="green"><B>ELIGIBLE</B></font>'
     elif TBD in responses and NO not in responses:

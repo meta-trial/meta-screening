@@ -1,6 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from django.contrib.sites.models import Site
-from edc_constants.constants import YES, NO, FEMALE
+from edc_constants.constants import YES, NO, FEMALE, BLACK
 from edc_reportable.units import MILLIGRAMS_PER_DECILITER
 from edc_utils import get_utcnow
 from faker import Faker
@@ -10,12 +10,21 @@ from .models import SubjectScreening
 
 fake = Faker()
 
+
 subjectscreening = Recipe(
     SubjectScreening,
     report_datetime=get_utcnow() - relativedelta(days=1),
+    hospital_identifier="111",
+    initials="ZZ",
     subject_identifier=None,
     gender=FEMALE,
     age_in_years=40,
+    ethnicity=BLACK,
+    hiv_pos=YES,
+    art_six_months=YES,
+    on_rx_stable=YES,
+    lives_nearby=YES,
+    staying_nearby=YES,
     consent_ability=YES,
     pregnant=NO,
     site=Site.objects.get_current(),
@@ -41,9 +50,8 @@ subjectscreening = Recipe(
     creatinine_units=MILLIGRAMS_PER_DECILITER,
     fasting_glucose=6.9,
     fasting_glucose_datetime=get_utcnow(),
-    ogtt_performed_datetime=get_utcnow(),
+    ogtt_base_datetime=get_utcnow(),
     #     ogtt_two_hr,
     #     ogtt_two_hr_units,
     #     ogtt_two_hr_datetime=get_utcnow(),
-    #     ogtt_two_hr_duration="02:00",
 )

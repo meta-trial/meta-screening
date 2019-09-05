@@ -78,7 +78,7 @@ class BMI:
     """
 
     def __init__(self, weight_kg=None, height_cm=None):
-        self.lower, self.upper = 10, 30
+        self.lower, self.upper = 5.0, 60.0
         self.weight = float(weight_kg)
         self.height = float(height_cm) / 100.0
         self.bmi = self.weight / (self.height ** 2)
@@ -111,7 +111,8 @@ class eGFR:
         self.scr_units = scr_units
 
         if not gender or gender not in [MALE, FEMALE]:
-            raise CalculatorError(f"Invalid gender. Expected on of {MALE}, {FEMALE}")
+            raise CalculatorError(
+                f"Invalid gender. Expected on of {MALE}, {FEMALE}")
         self.gender = gender
 
         if not (18 < (age or 0) < 120):
@@ -130,7 +131,8 @@ class eGFR:
         )
 
         if not normal:
-            raise CalculatorError(f"Creatinine is abnormal. Got {scr}.")
+            raise CalculatorError(
+                f"Creatinine is abnormal. Got {scr}{self.scr_units}.")
 
         self.scr = float(scr) / 88.42  # serum creatinine mg/L
 

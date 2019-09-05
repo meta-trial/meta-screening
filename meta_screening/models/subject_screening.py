@@ -32,6 +32,12 @@ class SubjectScreening(
     identifier_cls = ScreeningIdentifier
     consent_model = "meta_subject.subjectconsent"
 
+    def save(self, *args, **kwargs):
+        if self._meta.label_lower == "meta_screening.subjectscreening":
+            raise SubjectScreeningModelError(
+                "Unable to save. Save via P1-3 proxy models.")
+        super().save(*args, **kwargs)
+
     class Meta:
         verbose_name = "Subject Screening"
         verbose_name_plural = "Subject Screening"

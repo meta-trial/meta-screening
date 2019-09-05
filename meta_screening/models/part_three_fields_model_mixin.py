@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO, YES
 from edc_model.validators import hm_validator
 
 from ..choices import OGTT_UNITS, SERUM_CREATININE_UNITS
@@ -40,16 +40,24 @@ class PartThreeFieldsModelMixin(models.Model):
     )
 
     fasted_duration_str = models.CharField(
-        verbose_name="How long have they fasted?",
+        verbose_name="How long have they fasted in hours and/or minutes?",
         max_length=8,
         validators=[hm_validator],
         null=True,
         blank=True,
-        help_text="format HH:MM",
+        help_text="Duration of fast. Format is `HHhMMm`. For example 1h23m, 12h7m, etc",
     )
 
     fasted_duration_minutes = models.IntegerField(
         null=True, help_text="system calculated value"
+    )
+
+    hba1c_performed = models.CharField(
+        verbose_name="Was the HbA1c performed?",
+        max_length=15,
+        choices=YES_NO,
+        default=YES,
+        help_text="",
     )
 
     hba1c = models.DecimalField(
@@ -57,8 +65,16 @@ class PartThreeFieldsModelMixin(models.Model):
         max_digits=8,
         decimal_places=4,
         null=True,
-        blank=False,
+        blank=True,
         help_text="in %",
+    )
+
+    creatinine_performed = models.CharField(
+        verbose_name="Was the serum creatinine performed?",
+        max_length=15,
+        choices=YES_NO,
+        default=YES,
+        help_text="",
     )
 
     creatinine = models.DecimalField(
@@ -66,7 +82,7 @@ class PartThreeFieldsModelMixin(models.Model):
         max_digits=8,
         decimal_places=4,
         null=True,
-        blank=False,
+        blank=True,
     )
 
     creatinine_units = models.CharField(
@@ -74,7 +90,7 @@ class PartThreeFieldsModelMixin(models.Model):
         max_length=15,
         choices=SERUM_CREATININE_UNITS,
         null=True,
-        blank=False,
+        blank=True,
     )
 
     # IFG
@@ -84,18 +100,18 @@ class PartThreeFieldsModelMixin(models.Model):
         decimal_places=4,
         validators=[MinValueValidator(1), MaxValueValidator(50)],
         null=True,
-        blank=False,
+        blank=True,
         help_text="mmol/L",
     )
 
     fasting_glucose_datetime = models.DateTimeField(
-        verbose_name="Time fasting glucose level measured", null=True, blank=False
+        verbose_name="Time fasting glucose level measured", null=True, blank=True
     )
 
-    ogtt_performed_datetime = models.DateTimeField(
+    ogtt_base_datetime = models.DateTimeField(
         verbose_name="Time oral glucose tolerance test was performed",
         null=True,
-        blank=False,
+        blank=True,
         help_text="(glucose solution given)",
     )
 
@@ -105,7 +121,7 @@ class PartThreeFieldsModelMixin(models.Model):
         decimal_places=4,
         validators=[MinValueValidator(1), MaxValueValidator(300)],
         null=True,
-        blank=False,
+        blank=True,
     )
 
     ogtt_two_hr_units = models.CharField(
@@ -113,22 +129,13 @@ class PartThreeFieldsModelMixin(models.Model):
         max_length=15,
         choices=OGTT_UNITS,
         null=True,
-        blank=False,
+        blank=True,
     )
 
     ogtt_two_hr_datetime = models.DateTimeField(
         verbose_name="Time blood glucose levels tested after glucose solution given",
         null=True,
-        blank=False,
-    )
-
-    ogtt_two_hr_duration = models.CharField(
-        verbose_name="Is the duration within range (110-130min)?",
-        max_length=15,
-        choices=YES_NO,
-        null=True,
-        blank=False,
-        help_text="Duration will be calculated when you click SAVE.",
+        blank=True,
     )
 
     class Meta:
