@@ -3,7 +3,6 @@ from django.test import TestCase, tag
 from edc_constants.constants import YES, BLACK, FEMALE, NOT_APPLICABLE, TBD, NO
 from edc_reportable.units import MICROMOLES_PER_LITER, MILLIMOLES_PER_LITER
 from edc_utils.date import get_utcnow
-from pprint import pprint
 
 from ..calculators import CalculatorUnitsError, ImpossibleValueError
 from ..models import ScreeningPartOne, ScreeningPartTwo, ScreeningPartThree
@@ -30,7 +29,8 @@ class TestScreeningPartThree(TestCase):
         self.screening_identifier = obj.screening_identifier
 
         obj = ScreeningPartTwo.objects.get(
-            screening_identifier=self.screening_identifier)
+            screening_identifier=self.screening_identifier
+        )
         obj.part_two_report_datetime = get_utcnow()
         obj.urine_bhcg_performed = NO
         obj.congestive_heart_failure = NO
@@ -48,7 +48,8 @@ class TestScreeningPartThree(TestCase):
     def test_defaults(self):
 
         obj = ScreeningPartThree.objects.get(
-            screening_identifier=self.screening_identifier)
+            screening_identifier=self.screening_identifier
+        )
         self.assertEqual(obj.eligible_part_one, YES)
         self.assertFalse(obj.reasons_ineligible_part_one)
 
@@ -64,7 +65,8 @@ class TestScreeningPartThree(TestCase):
     def test_eligible(self):
 
         obj = ScreeningPartThree.objects.get(
-            screening_identifier=self.screening_identifier)
+            screening_identifier=self.screening_identifier
+        )
         self.assertEqual(obj.eligible_part_one, YES)
         self.assertFalse(obj.reasons_ineligible_part_one)
         self.assertEqual(obj.eligible_part_two, YES)
@@ -114,8 +116,6 @@ class TestScreeningPartThree(TestCase):
         obj.creatinine_units = MICROMOLES_PER_LITER
         obj.save()
 
-        pprint(obj.__dict__)
-
         self.assertEqual(obj.eligible_part_three, TBD)
         self.assertFalse(obj.reasons_ineligible_part_three)
         self.assertFalse(obj.eligible)
@@ -153,8 +153,6 @@ class TestScreeningPartThree(TestCase):
 
         obj.ogtt_two_hr_units = MILLIMOLES_PER_LITER
         obj.save()
-
-        pprint(obj.__dict__)
 
         self.assertEqual(obj.eligible_part_three, NO)
         self.assertIn("BMI/IFT/OGTT", obj.reasons_ineligible_part_three)

@@ -2,7 +2,6 @@ from edc_model.models import BaseUuidModel
 from edc_screening.model_mixins import ScreeningModelMixin
 from edc_screening.screening_identifier import ScreeningIdentifier
 
-
 from .calculated_model_mixin import CalculatedModelMixin
 from .eligibility_model_mixin import EligibilityModelMixin
 from .part_one_fields_model_mixin import PartOneFieldsModelMixin
@@ -35,7 +34,8 @@ class SubjectScreening(
     def save(self, *args, **kwargs):
         if self._meta.label_lower == "meta_screening.subjectscreening":
             raise SubjectScreeningModelError(
-                "Unable to save. Save via P1-3 proxy models.")
+                "Unable to save. Save via P1-3 proxy models."
+            )
         super().save(*args, **kwargs)
 
     class Meta:

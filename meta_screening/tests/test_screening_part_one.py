@@ -25,14 +25,10 @@ class TestSubjectScreening(TestCase):
     def test_hospital_id_integrity(self):
 
         hospital_identifier = "111"
-        obj = ScreeningPartOne(
-            age_in_years=25,
-            hospital_identifier=hospital_identifier)
+        obj = ScreeningPartOne(age_in_years=25, hospital_identifier=hospital_identifier)
         obj.save()
 
-        obj = ScreeningPartOne(
-            age_in_years=25,
-            hospital_identifier=hospital_identifier)
+        obj = ScreeningPartOne(age_in_years=25, hospital_identifier=hospital_identifier)
         try:
             obj.save()
         except IntegrityError:
@@ -79,8 +75,8 @@ class TestSubjectScreening(TestCase):
         obj.save()
         self.assertEqual(obj.eligible_part_one, NO)
         self.assertIn(
-            "Unable/Unwilling to stay nearby",
-            obj.reasons_ineligible_part_one)
+            "Unable/Unwilling to stay nearby", obj.reasons_ineligible_part_one
+        )
         obj.staying_nearby = YES
         obj.save()
         self.assertEqual(obj.eligible_part_one, YES)

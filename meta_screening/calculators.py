@@ -50,7 +50,8 @@ def converted_ogtt_two_hr(obj):
             raise CalculatorUnitsError(
                 f"Invalid units for `ogtt_two_hr`. Expected one "
                 f"of [{MILLIGRAMS_PER_DECILITER}, {MILLIMOLES_PER_LITER}]. "
-                f"Got {obj.ogtt_two_hr_units}.")
+                f"Got {obj.ogtt_two_hr_units}."
+            )
     return None
 
 
@@ -65,7 +66,8 @@ def converted_creatinine(obj):
             return float(obj.creatinine)
         else:
             raise CalculatorUnitsError(
-                f"Invalid units for `creatinine`. Got {obj.creatinine_units}.")
+                f"Invalid units for `creatinine`. Got {obj.creatinine_units}."
+            )
     return None
 
 
@@ -127,8 +129,7 @@ class eGFR:
         self.scr_units = scr_units
 
         if not gender or gender not in [MALE, FEMALE]:
-            raise CalculatorError(
-                f"Invalid gender. Expected on of {MALE}, {FEMALE}")
+            raise CalculatorError(f"Invalid gender. Expected on of {MALE}, {FEMALE}")
         self.gender = gender
 
         if not (18 < (age or 0) < 120):
@@ -148,7 +149,8 @@ class eGFR:
 
         if not normal:
             raise ImpossibleValueError(
-                f"Creatinine is abnormal. Got {scr}{self.scr_units}.")
+                f"Creatinine is abnormal. Got {scr}{self.scr_units}."
+            )
 
         self.scr = float(scr) / 88.42  # serum creatinine mg/L
 

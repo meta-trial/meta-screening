@@ -1,9 +1,9 @@
-from django.db import models
 from django.core.validators import (
     MaxLengthValidator,
     MinLengthValidator,
     RegexValidator,
 )
+from django.db import models
 from edc_constants.choices import PREG_YES_NO_NA, YES_NO, YES_NO_NA
 
 from ..choices import ETHNICITY

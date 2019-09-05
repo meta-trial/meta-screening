@@ -43,5 +43,4 @@ class TestCalculators(TestCase):
 
         self.assertEquals(round(egfr2.value, 2), 828.76)
 
-        self.assertRaises(ImpossibleValueError, eGFR,
-                          gender=MALE, age=30, scr=1000.0)
+        self.assertRaises(ImpossibleValueError, eGFR, gender=MALE, age=30, scr=1000.0)

@@ -1,9 +1,9 @@
+from dateutil.relativedelta import relativedelta
 from django.test import TestCase, tag
 from edc_constants.constants import YES, BLACK, FEMALE, NOT_APPLICABLE, TBD, NO
 from edc_utils.date import get_utcnow
 
 from ..models import ScreeningPartOne, ScreeningPartTwo
-from dateutil.relativedelta import relativedelta
 
 
 class TestScreeningPartTwo(TestCase):
@@ -29,7 +29,8 @@ class TestScreeningPartTwo(TestCase):
     def test_defaults(self):
 
         obj = ScreeningPartTwo.objects.get(
-            screening_identifier=self.screening_identifier)
+            screening_identifier=self.screening_identifier
+        )
         self.assertEqual(obj.eligible_part_one, YES)
         self.assertTrue(obj.reasons_ineligible_part_one == "")
 
@@ -42,7 +43,8 @@ class TestScreeningPartTwo(TestCase):
     def test_eligible(self):
 
         obj = ScreeningPartTwo.objects.get(
-            screening_identifier=self.screening_identifier)
+            screening_identifier=self.screening_identifier
+        )
         self.assertEqual(obj.eligible_part_one, YES)
         self.assertTrue(obj.reasons_ineligible_part_one == "")
 

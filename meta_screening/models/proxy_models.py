@@ -6,7 +6,6 @@ from ..calculators import (
     converted_creatinine,
     converted_ogtt_two_hr,
     CalculatorError,
-    ImpossibleValueError,
 )
 from ..eligibility import (
     calculate_eligible_part_one,
@@ -61,8 +60,8 @@ class ScreeningPartThree(SubjectScreening):
             pass
         # try:
         self.calculated_egfr = calculate_egfr(self)
-#         except ImpossibleValueError:
-#             pass
+        #         except ImpossibleValueError:
+        #             pass
         try:
             calculate_eligible_part_three(self)
         except EligibilityPartThreeError:

@@ -68,8 +68,7 @@ def calculate_eligible_final(obj):
             obj.eligible_part_three not in valid_opts,
         ]
     ):
-        opts = [obj.eligible_part_one,
-                obj.eligible_part_two, obj.eligible_part_three]
+        opts = [obj.eligible_part_one, obj.eligible_part_two, obj.eligible_part_three]
         raise SubjectScreeningEligibilityError(
             f"Invalid value for eligible. Got {opts}"
         )
@@ -96,6 +95,7 @@ def calculate_eligible_part_one(obj):
     """Updates model instance fields `eligible_part_one`
     and `reasons_ineligible_part_one`.
     """
+
     required_fields = [
         "consent_ability",
         "gender",
@@ -107,12 +107,8 @@ def calculate_eligible_part_one(obj):
         "staying_nearby",
         "pregnant",
     ]
-    required_values = [getattr(obj, f) for f in required_fields]
-    if not all(required_values):
-        missing_values = {f: getattr(obj, f)
-                          for f in required_fields if not getattr(obj, f)}
-        raise EligibilityPartOneError(
-            f"Missing required values. Got {missing_values}")
+
+    check_for_required_field_values(obj, required_fields, EligibilityPartOneError)
 
     reasons_ineligible = []
     if obj.consent_ability == NO:
@@ -143,12 +139,7 @@ def calculate_eligible_part_two(obj):
     and `reasons_ineligible_part_two`.
     """
 
-    required_values = [getattr(obj, f) for f in part2_fields]
-    if not all(required_values):
-        missing_values = {f: getattr(obj, f)
-                          for f in part2_fields if not getattr(obj, f)}
-        raise EligibilityPartTwoError(
-            f"Missing required values. Got {missing_values}")
+    check_for_required_field_values(obj, part2_fields, EligibilityPartTwoError)
 
     reasons_ineligible = []
 
@@ -181,9 +172,7 @@ def calculate_eligible_part_three(obj):
         "inclusion_d",
         "ogtt_two_hr",
     ]
-    required_values = [getattr(obj, f) for f in required_fields]
-    if not all(required_values):
-        raise EligibilityPartThreeError
+    check_for_required_field_values(obj, required_fields, EligibilityPartThreeError)
 
     reasons_ineligible = []
 
@@ -237,8 +226,7 @@ def calculate_eligible_part_three(obj):
             obj.inclusion_d == TBD,
         ]
     ):
-        raise SubjectScreeningEligibilityError(
-            "Part 3 inclusion criteria incomplete")
+        raise SubjectScreeningEligibilityError("Part 3 inclusion criteria incomplete")
     if all(
         [
             obj.inclusion_a == NO,
@@ -277,8 +265,7 @@ def eligibility_status(obj):
 
 
 def eligibility_display_label(obj):
-    responses = [obj.eligible_part_one,
-                 obj.eligible_part_two, obj.eligible_part_three]
+    responses = [obj.eligible_part_one, obj.eligible_part_two, obj.eligible_part_three]
     if obj.eligible:
         display_label = '<font color="green"><B>ELIGIBLE</B></font>'
     elif TBD in responses and NO not in responses:
@@ -286,3 +273,12 @@ def eligibility_display_label(obj):
     else:
         display_label = "<B>not eligible</B>"
     return display_label
+
+
+def check_for_required_field_values(obj=None, required_fields=None, exception_cls=None):
+    required_values = [getattr(obj, f) for f in required_fields]
+    if not all(required_values):
+        missing_values = {
+            f: getattr(obj, f) for f in required_fields if not getattr(obj, f)
+        }
+        raise exception_cls(f"Missing required values. Got {missing_values}")

@@ -3,8 +3,6 @@ from edc_constants.constants import YES, NOT_APPLICABLE
 from edc_form_validators import FormValidator
 
 from ..eligibility import part2_fields
-from dateutil.relativedelta import relativedelta
-from datetime import timedelta
 
 
 class ScreeningPartTwoFormValidator(FormValidator):
@@ -24,11 +22,11 @@ class ScreeningPartTwoFormValidator(FormValidator):
             YES, field="urine_bhcg_performed", field_required="urine_bhcg_date"
         )
 
-        self.applicable_if_true(self.eligible_part_one,
-                                field_applicable="advised_to_fast")
+        self.applicable_if_true(
+            self.eligible_part_one, field_applicable="advised_to_fast"
+        )
 
-        self.required_if(YES, field="advised_to_fast",
-                         field_required="appt_datetime")
+        self.required_if(YES, field="advised_to_fast", field_required="appt_datetime")
 
         self.raise_if_not_future_appt_datetime()
 
@@ -49,15 +47,19 @@ class ScreeningPartTwoFormValidator(FormValidator):
         """Raises if appt_datetime is not future relative to
         part_two_report_datetime.
         """
-        tdelta = (self.cleaned_data.get("appt_datetime")
-                  - self.cleaned_data.get("part_two_report_datetime"))
+        tdelta = self.cleaned_data.get("appt_datetime") - self.cleaned_data.get(
+            "part_two_report_datetime"
+        )
         print(tdelta)
 
         hours = tdelta.seconds / 3600
 
         if (tdelta.days == 0 and hours < 10) or tdelta.days < 0:
             raise forms.ValidationError(
-                {"appt_datetime": (
-                    f"Invalid date. Must be at least 10hrs "
-                    f"from report date/time. Got {tdelta.days} days {round(hours,1)} hrs.")
-                 })
+                {
+                    "appt_datetime": (
+                        f"Invalid date. Must be at least 10hrs "
+                        f"from report date/time. Got {tdelta.days} days {round(hours,1)} hrs."
+                    )
+                }
+            )

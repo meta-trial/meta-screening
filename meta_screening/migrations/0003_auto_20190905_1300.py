@@ -5,29 +5,22 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('meta_screening', '0002_auto_20190905_1212'),
-    ]
+    dependencies = [("meta_screening", "0002_auto_20190905_1212")]
 
     operations = [
         migrations.RemoveField(
-            model_name='historicalscreeningpartone',
-            name='ogtt_two_hr_duration',
+            model_name="historicalscreeningpartone", name="ogtt_two_hr_duration"
         ),
         migrations.RemoveField(
-            model_name='historicalscreeningpartthree',
-            name='ogtt_two_hr_duration',
+            model_name="historicalscreeningpartthree", name="ogtt_two_hr_duration"
         ),
         migrations.RemoveField(
-            model_name='historicalscreeningparttwo',
-            name='ogtt_two_hr_duration',
+            model_name="historicalscreeningparttwo", name="ogtt_two_hr_duration"
         ),
         migrations.RemoveField(
-            model_name='historicalsubjectscreening',
-            name='ogtt_two_hr_duration',
+            model_name="historicalsubjectscreening", name="ogtt_two_hr_duration"
         ),
         migrations.RemoveField(
-            model_name='subjectscreening',
-            name='ogtt_two_hr_duration',
+            model_name="subjectscreening", name="ogtt_two_hr_duration"
         ),
     ]
