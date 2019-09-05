@@ -6,6 +6,18 @@ class SubjectScreeningEligibilityError(Exception):
     pass
 
 
+class EligibilityPartOneError(Exception):
+    pass
+
+
+class EligibilityPartTwoError(Exception):
+    pass
+
+
+class EligibilityPartThreeError(Exception):
+    pass
+
+
 part2_fields = [
     "congestive_heart_failure",
     "liver_disease",
@@ -83,6 +95,21 @@ def calculate_eligible_part_one(obj):
     """Updates model instance fields `eligible_part_one`
     and `reasons_ineligible_part_one`.
     """
+
+    required_fields = [
+        "consent_ability",
+        "gender",
+        "age_in_years",
+        "hiv_pos",
+        "art_six_months",
+        "on_rx_stable",
+        "lives_nearby",
+        "staying_nearby",
+        "pregnant",
+    ]
+
+    check_for_required_field_values(obj, required_fields, EligibilityPartOneError)
+
     reasons_ineligible = []
     if obj.consent_ability == NO:
         reasons_ineligible.append("Unable/unwilling to consent")
@@ -111,6 +138,9 @@ def calculate_eligible_part_two(obj):
     """Updates model instance fields `eligible_part_two`
     and `reasons_ineligible_part_two`.
     """
+
+    check_for_required_field_values(obj, part2_fields, EligibilityPartTwoError)
+
     reasons_ineligible = []
 
     responses = {}
@@ -132,6 +162,18 @@ def calculate_eligible_part_three(obj):
     """Updates model instance fields `eligible_part_three`
     and `reasons_ineligible_part_three`.
     """
+    required_fields = [
+        "calculated_bmi",
+        "calculated_egfr",
+        "fasting_glucose",
+        "inclusion_a",
+        "inclusion_b",
+        "inclusion_c",
+        "inclusion_d",
+        "ogtt_two_hr",
+    ]
+    check_for_required_field_values(obj, required_fields, EligibilityPartThreeError)
+
     reasons_ineligible = []
 
     # BMI>30 combined with impaired fasting glucose (6.1 to 6.9 mmol/L)
@@ -231,3 +273,12 @@ def eligibility_display_label(obj):
     else:
         display_label = "<B>not eligible</B>"
     return display_label
+
+
+def check_for_required_field_values(obj=None, required_fields=None, exception_cls=None):
+    required_values = [getattr(obj, f) for f in required_fields]
+    if not all(required_values):
+        missing_values = {
+            f: getattr(obj, f) for f in required_fields if not getattr(obj, f)
+        }
+        raise exception_cls(f"Missing required values. Got {missing_values}")

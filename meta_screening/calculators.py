@@ -1,3 +1,4 @@
+from dateutil.relativedelta import relativedelta
 from edc_constants.constants import FEMALE, MALE, BLACK, OTHER
 from edc_reportable.units import (
     MILLIGRAMS_PER_DECILITER,
@@ -6,7 +7,6 @@ from edc_reportable.units import (
 )
 from edc_reportable.normal_reference import NormalReference
 from edc_reportable.value_reference_group import ValueReferenceGroup
-from dateutil.relativedelta import relativedelta
 from edc_utils.date import get_utcnow
 
 
@@ -14,7 +14,7 @@ scr_reportable = ValueReferenceGroup(name="scr")
 ref = NormalReference(
     name="scr",
     lower=0.2,
-    upper=20.0,
+    upper=30.0,
     lower_inclusive=True,
     upper_inclusive=True,
     units=MILLIGRAMS_PER_DECILITER,
@@ -29,6 +29,14 @@ class CalculatorError(Exception):
     pass
 
 
+class CalculatorUnitsError(Exception):
+    pass
+
+
+class ImpossibleValueError(Exception):
+    pass
+
+
 def converted_ogtt_two_hr(obj):
     """Return ogtt_two_hr in mmol/L or None.
     """
@@ -36,8 +44,14 @@ def converted_ogtt_two_hr(obj):
     if obj.ogtt_two_hr:
         if obj.ogtt_two_hr_units == MILLIGRAMS_PER_DECILITER:
             return float(obj.ogtt_two_hr) / 18
-        if obj.ogtt_two_hr_units == MILLIMOLES_PER_LITER:
+        elif obj.ogtt_two_hr_units == MILLIMOLES_PER_LITER:
             return float(obj.ogtt_two_hr)
+        else:
+            raise CalculatorUnitsError(
+                f"Invalid units for `ogtt_two_hr`. Expected one "
+                f"of [{MILLIGRAMS_PER_DECILITER}, {MILLIMOLES_PER_LITER}]. "
+                f"Got {obj.ogtt_two_hr_units}."
+            )
     return None
 
 
@@ -48,8 +62,12 @@ def converted_creatinine(obj):
     if obj.creatinine:
         if obj.creatinine_units == MILLIGRAMS_PER_DECILITER:
             return float(obj.creatinine) * 88.42
-        if obj.creatinine_units == MICROMOLES_PER_LITER:
+        elif obj.creatinine_units == MICROMOLES_PER_LITER:
             return float(obj.creatinine)
+        else:
+            raise CalculatorUnitsError(
+                f"Invalid units for `creatinine`. Got {obj.creatinine_units}."
+            )
     return None
 
 
@@ -78,7 +96,7 @@ class BMI:
     """
 
     def __init__(self, weight_kg=None, height_cm=None):
-        self.lower, self.upper = 10, 30
+        self.lower, self.upper = 5.0, 60.0
         self.weight = float(weight_kg)
         self.height = float(height_cm) / 100.0
         self.bmi = self.weight / (self.height ** 2)
@@ -104,7 +122,7 @@ class eGFR:
 
         scr_units = MILLIGRAMS_PER_DECILITER if not scr_units else scr_units
         if scr_units not in [MILLIGRAMS_PER_DECILITER, MICROMOLES_PER_LITER]:
-            raise CalculatorError(
+            raise CalculatorUnitsError(
                 f"Invalid serum creatine units. "
                 f"Expected on of {MILLIGRAMS_PER_DECILITER}, {MICROMOLES_PER_LITER}"
             )
@@ -130,7 +148,9 @@ class eGFR:
         )
 
         if not normal:
-            raise CalculatorError(f"Creatinine is abnormal. Got {scr}.")
+            raise ImpossibleValueError(
+                f"Creatinine is abnormal. Got {scr}{self.scr_units}."
+            )
 
         self.scr = float(scr) / 88.42  # serum creatinine mg/L
 

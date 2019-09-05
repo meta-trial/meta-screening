@@ -30,6 +30,7 @@ def get_part_two_fieldset(collapse=None):
     dct = {
         "description": "To be completed by the study clinician",
         "fields": (
+            "part_two_report_datetime",
             "urine_bhcg_performed",
             "urine_bhcg",
             "urine_bhcg_date",
@@ -56,18 +57,19 @@ def get_part_three_fieldset(collapse=None):
         "fields": (
             "weight",
             "height",
-            "fasted",
-            "fasted_duration_str",
+            "hba1c_performed",
             "hba1c",
+            "creatinine_performed",
             "creatinine",
             "creatinine_units",
+            "fasted",
+            "fasted_duration_str",
             "fasting_glucose",
             "fasting_glucose_datetime",
-            "ogtt_performed_datetime",
+            "ogtt_base_datetime",
             "ogtt_two_hr",
             "ogtt_two_hr_units",
             "ogtt_two_hr_datetime",
-            "ogtt_two_hr_duration",
         ),
     }
     if collapse:
