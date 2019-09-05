@@ -1,9 +1,12 @@
+from edc_constants.constants import TBD
+
 from ..calculators import (
     calculate_bmi,
     calculate_egfr,
     converted_creatinine,
     converted_ogtt_two_hr,
     CalculatorError,
+    ImpossibleValueError,
 )
 from ..eligibility import (
     calculate_eligible_part_one,
@@ -11,10 +14,10 @@ from ..eligibility import (
     calculate_eligible_part_three,
     check_eligible_final,
     EligibilityPartOneError,
+    EligibilityPartTwoError,
     EligibilityPartThreeError,
 )
 from .subject_screening import SubjectScreening
-from edc_constants.constants import TBD
 
 
 class ScreeningPartOne(SubjectScreening):
@@ -36,8 +39,10 @@ class ScreeningPartOne(SubjectScreening):
 
 class ScreeningPartTwo(SubjectScreening):
     def save(self, *args, **kwargs):
-        calculate_eligible_part_two(self)
-        check_eligible_final(self)
+        try:
+            calculate_eligible_part_two(self)
+        except EligibilityPartTwoError:
+            check_eligible_final(self)
         super().save(*args, **kwargs)
 
     class Meta:
@@ -54,11 +59,10 @@ class ScreeningPartThree(SubjectScreening):
             self.calculated_bmi = calculate_bmi(self)
         except CalculatorError:
             pass
-        try:
-            self.calculated_egfr = calculate_egfr(self)
-        except CalculatorError:
-            pass
-
+        # try:
+        self.calculated_egfr = calculate_egfr(self)
+#         except ImpossibleValueError:
+#             pass
         try:
             calculate_eligible_part_three(self)
         except EligibilityPartThreeError:

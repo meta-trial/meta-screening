@@ -1,7 +1,7 @@
 from django.test import TestCase, tag
 from edc_constants.constants import FEMALE, MALE, BLACK
 
-from ..calculators import eGFR, CalculatorError, BMI
+from ..calculators import eGFR, CalculatorError, BMI, ImpossibleValueError
 
 
 class TestCalculators(TestCase):
@@ -43,5 +43,5 @@ class TestCalculators(TestCase):
 
         self.assertEquals(round(egfr2.value, 2), 828.76)
 
-        self.assertRaises(CalculatorError, eGFR,
+        self.assertRaises(ImpossibleValueError, eGFR,
                           gender=MALE, age=30, scr=1000.0)

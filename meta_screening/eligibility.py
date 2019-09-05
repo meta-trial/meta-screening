@@ -10,6 +10,10 @@ class EligibilityPartOneError(Exception):
     pass
 
 
+class EligibilityPartTwoError(Exception):
+    pass
+
+
 class EligibilityPartThreeError(Exception):
     pass
 
@@ -138,6 +142,14 @@ def calculate_eligible_part_two(obj):
     """Updates model instance fields `eligible_part_two`
     and `reasons_ineligible_part_two`.
     """
+
+    required_values = [getattr(obj, f) for f in part2_fields]
+    if not all(required_values):
+        missing_values = {f: getattr(obj, f)
+                          for f in part2_fields if not getattr(obj, f)}
+        raise EligibilityPartTwoError(
+            f"Missing required values. Got {missing_values}")
+
     reasons_ineligible = []
 
     responses = {}
