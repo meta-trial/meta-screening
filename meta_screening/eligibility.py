@@ -258,7 +258,6 @@ def eligibility_status(obj):
         f"P2: {obj.eligible_part_two.upper()}<BR>"
         f"P3: {obj.eligible_part_three.upper()}<BR>"
     )
-
     display_label = eligibility_display_label(obj)
 
     return status_str + display_label
