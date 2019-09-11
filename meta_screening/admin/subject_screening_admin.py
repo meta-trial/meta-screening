@@ -99,6 +99,7 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
         "on_rx_stable": admin.VERTICAL,
         "pregnant": admin.VERTICAL,
         "renal_function_condition": admin.VERTICAL,
+        "screening_consent": admin.VERTICAL,
         "staying_nearby": admin.VERTICAL,
         "tissue_hypoxia_condition": admin.VERTICAL,
         "unsuitable_for_study": admin.VERTICAL,

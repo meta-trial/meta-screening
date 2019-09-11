@@ -11,6 +11,15 @@ from ..choices import ETHNICITY
 
 class PartOneFieldsModelMixin(models.Model):
 
+    screening_consent = models.CharField(
+        verbose_name=(
+            "Has the subject given his/her verbal consent "
+            "to be screened for the META trial?"
+        ),
+        max_length=15,
+        choices=YES_NO,
+    )
+
     hospital_identifier = models.CharField(max_length=25, unique=True)
 
     initials = models.CharField(

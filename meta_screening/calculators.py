@@ -23,6 +23,18 @@ ref = NormalReference(
     age_lower_inclusive=True,
 )
 scr_reportable.add_normal(ref)
+ref = NormalReference(
+    name="scr",
+    lower=40,
+    upper=130,
+    lower_inclusive=True,
+    upper_inclusive=True,
+    units=MICROMOLES_PER_LITER,
+    gender=[MALE, FEMALE],
+    age_lower=18,
+    age_lower_inclusive=True,
+)
+scr_reportable.add_normal(ref)
 
 
 class CalculatorError(Exception):
@@ -86,6 +98,7 @@ def calculate_egfr(obj):
             age=obj.age_in_years,
             ethnicity=obj.ethnicity,
             scr=obj.converted_creatinine,
+            scr_units=MICROMOLES_PER_LITER,
         )
         calculated_egfr = eGFR(**opts).value
     return calculated_egfr

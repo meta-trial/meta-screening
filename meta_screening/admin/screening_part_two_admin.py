@@ -28,6 +28,7 @@ class ScreeningPartTwoAdmin(SubjectScreeningAdmin):
 
     readonly_fields = (
         # part one
+        "screening_consent",
         "report_datetime",
         "hospital_identifier",
         "initials",

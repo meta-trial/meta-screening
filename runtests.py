@@ -45,6 +45,8 @@ DEFAULT_SETTINGS = DefaultTestSettings(
         "edc_offstudy.apps.AppConfig",
         "edc_reference.apps.AppConfig",
         "edc_registration.apps.AppConfig",
+        "edc_sites.apps.AppConfig",
+        "edc_screening.apps.AppConfig",
         "meta_screening.apps.AppConfig",
     ],
     add_dashboard_middleware=True,

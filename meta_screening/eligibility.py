@@ -1,5 +1,7 @@
 from django.utils.safestring import mark_safe
 from edc_constants.constants import FEMALE, MALE, YES, TBD, NO
+from edc_utils.date import get_utcnow
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class SubjectScreeningEligibilityError(Exception):
@@ -54,6 +56,7 @@ def check_eligible_final(obj):
             obj.reasons_ineligible = "|".join(reasons_ineligible)
         else:
             obj.reasons_ineligible = None
+    obj.eligibility_datetime = get_utcnow()
 
 
 def calculate_eligible_final(obj):

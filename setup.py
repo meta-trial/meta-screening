@@ -42,6 +42,8 @@ setup(
         'edc-offstudy',
         'edc-reportable',
         'edc-subject-dashboard',
+        'edc_screening',
+        'edc-sites',
     ],
     classifiers=[
         'Environment :: Web Environment',

@@ -14,6 +14,8 @@ class AppConfig(DjangoApponfig):
     has_exportable_data = True
 
     def ready(self):
+        from .signals import refer_to_icp_on_post_save  # noqa
+
         connection_created.connect(activate_foreign_keys)
 
 

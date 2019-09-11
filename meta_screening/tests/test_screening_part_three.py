@@ -11,6 +11,7 @@ from ..models import ScreeningPartOne, ScreeningPartTwo, ScreeningPartThree
 class TestScreeningPartThree(TestCase):
     def setUp(self):
         obj = ScreeningPartOne(
+            screening_consent=YES,
             report_datetime=get_utcnow(),
             hospital_identifier="111",
             initials="ZZ",
@@ -102,7 +103,7 @@ class TestScreeningPartThree(TestCase):
         self.assertFalse(obj.consented)
 
         obj.creatinine_performed = YES
-        obj.creatinine = 50
+        obj.creatinine = 20.0
         obj.creatinine_units = MICROMOLES_PER_LITER
         try:
             obj.save()
@@ -112,7 +113,7 @@ class TestScreeningPartThree(TestCase):
             self.fail("ImpossibleValueError unexpectedly not raised.")
 
         obj.creatinine_performed = YES
-        obj.creatinine = 27
+        obj.creatinine = 50
         obj.creatinine_units = MICROMOLES_PER_LITER
         obj.save()
 

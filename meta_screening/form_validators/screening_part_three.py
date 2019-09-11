@@ -70,7 +70,7 @@ class ScreeningPartThreeFormValidator(FormValidator):
             tdelta = self.cleaned_data.get(
                 "ogtt_two_hr_datetime"
             ) - self.cleaned_data.get("ogtt_base_datetime")
-            if tdelta.total_seconds < 3600:
+            if tdelta.total_seconds() < 3600:
                 raise forms.ValidationError(
                     {
                         "ogtt_two_hr_datetime": (
@@ -127,7 +127,7 @@ class ScreeningPartThreeFormValidator(FormValidator):
         fasting_glucose_dte = self.cleaned_data.get("fasting_glucose_datetime")
         ogtt_performed_dte = self.cleaned_data.get("ogtt_base_datetime")
         ogtt_two_hr_dte = self.cleaned_data.get("ogtt_two_hr_datetime")
-        if fasting_glucose_dte and ogtt_performed_dte:
+        if fasting_glucose_dte and ogtt_performed_dte and ogtt_two_hr_dte:
             total_seconds = (ogtt_performed_dte - fasting_glucose_dte).total_seconds()
             if total_seconds <= 1:
                 raise forms.ValidationError(
