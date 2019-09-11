@@ -6,6 +6,7 @@ def get_part_one_fieldset(collapse=None):
     dct = {
         "description": "To be completed by the research nurse",
         "fields": (
+            "screening_consent",
             "report_datetime",
             "hospital_identifier",
             "initials",
