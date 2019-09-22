@@ -37,20 +37,20 @@ class TestScreeningPartThree(TestCase):
             setattr(obj, k, v)
         obj.save()
 
-#
-#         obj.part_two_report_datetime = get_utcnow()
-#         obj.urine_bhcg_performed = NO
-#         obj.congestive_heart_failure = NO
-#         obj.liver_disease = NO
-#         obj.alcoholism = NO
-#         obj.acute_metabolic_acidosis = NO
-#         obj.renal_function_condition = NO
-#         obj.tissue_hypoxia_condition = NO
-#         obj.acute_condition = NO
-#         obj.metformin_sensitivity = NO
-#         obj.advised_to_fast = YES
-#         obj.appt_datetime = get_utcnow() + relativedelta(days=1)
-#         obj.save()
+    #
+    #         obj.part_two_report_datetime = get_utcnow()
+    #         obj.urine_bhcg_performed = NO
+    #         obj.congestive_heart_failure = NO
+    #         obj.liver_disease = NO
+    #         obj.alcoholism = NO
+    #         obj.acute_metabolic_acidosis = NO
+    #         obj.renal_function_condition = NO
+    #         obj.tissue_hypoxia_condition = NO
+    #         obj.acute_condition = NO
+    #         obj.metformin_sensitivity = NO
+    #         obj.advised_to_fast = YES
+    #         obj.appt_datetime = get_utcnow() + relativedelta(days=1)
+    #         obj.save()
 
     def test_defaults(self):
 
