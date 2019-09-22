@@ -6,13 +6,13 @@ from edc_utils import get_utcnow
 from faker import Faker
 from model_mommy.recipe import Recipe
 
-from .models import SubjectScreening
+from .models import ScreeningPartOne
 
 fake = Faker()
 
 
-subjectscreening = Recipe(
-    SubjectScreening,
+screeningpartone = Recipe(
+    ScreeningPartOne,
     report_datetime=get_utcnow() - relativedelta(days=1),
     hospital_identifier="111",
     initials="ZZ",
@@ -51,7 +51,4 @@ subjectscreening = Recipe(
     fasting_glucose=6.9,
     fasting_glucose_datetime=get_utcnow(),
     ogtt_base_datetime=get_utcnow(),
-    #     ogtt_two_hr,
-    #     ogtt_two_hr_units,
-    #     ogtt_two_hr_datetime=get_utcnow(),
 )

@@ -6,6 +6,7 @@ from edc_utils.date import get_utcnow
 
 from ..calculators import CalculatorUnitsError, ImpossibleValueError
 from ..models import ScreeningPartOne, ScreeningPartTwo, ScreeningPartThree
+from .options import part_two_eligible_options, part_three_eligible_options
 
 
 class TestScreeningPartThree(TestCase):
@@ -32,19 +33,24 @@ class TestScreeningPartThree(TestCase):
         obj = ScreeningPartTwo.objects.get(
             screening_identifier=self.screening_identifier
         )
-        obj.part_two_report_datetime = get_utcnow()
-        obj.urine_bhcg_performed = NO
-        obj.congestive_heart_failure = NO
-        obj.liver_disease = NO
-        obj.alcoholism = NO
-        obj.acute_metabolic_acidosis = NO
-        obj.renal_function_condition = NO
-        obj.tissue_hypoxia_condition = NO
-        obj.acute_condition = NO
-        obj.metformin_sensitivity = NO
-        obj.advised_to_fast = YES
-        obj.appt_datetime = get_utcnow() + relativedelta(days=1)
+        for k, v in part_two_eligible_options.items():
+            setattr(obj, k, v)
         obj.save()
+
+#
+#         obj.part_two_report_datetime = get_utcnow()
+#         obj.urine_bhcg_performed = NO
+#         obj.congestive_heart_failure = NO
+#         obj.liver_disease = NO
+#         obj.alcoholism = NO
+#         obj.acute_metabolic_acidosis = NO
+#         obj.renal_function_condition = NO
+#         obj.tissue_hypoxia_condition = NO
+#         obj.acute_condition = NO
+#         obj.metformin_sensitivity = NO
+#         obj.advised_to_fast = YES
+#         obj.appt_datetime = get_utcnow() + relativedelta(days=1)
+#         obj.save()
 
     def test_defaults(self):
 
@@ -64,6 +70,15 @@ class TestScreeningPartThree(TestCase):
         self.assertFalse(obj.consented)
 
     def test_eligible(self):
+        obj = ScreeningPartThree.objects.get(
+            screening_identifier=self.screening_identifier
+        )
+        for k, v in part_three_eligible_options.items():
+            setattr(obj, k, v)
+        obj.save()
+        self.assertEqual(obj.eligible_part_three, YES)
+
+    def test_eligible2(self):
 
         obj = ScreeningPartThree.objects.get(
             screening_identifier=self.screening_identifier

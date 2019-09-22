@@ -4,25 +4,12 @@ from edc_constants.constants import YES, BLACK, FEMALE, NOT_APPLICABLE, TBD, NO
 from edc_utils.date import get_utcnow
 
 from ..models import ScreeningPartOne, ScreeningPartTwo
+from .options import part_one_eligible_options, part_two_eligible_options
 
 
 class TestScreeningPartTwo(TestCase):
     def setUp(self):
-        self.screening = ScreeningPartOne(
-            report_datetime=get_utcnow(),
-            hospital_identifier="111",
-            initials="ZZ",
-            gender=FEMALE,
-            age_in_years=25,
-            ethnicity=BLACK,
-            hiv_pos=YES,
-            art_six_months=YES,
-            on_rx_stable=YES,
-            lives_nearby=YES,
-            staying_nearby=YES,
-            pregnant=NOT_APPLICABLE,
-            consent_ability=YES,
-        )
+        self.screening = ScreeningPartOne(**part_one_eligible_options)
         self.screening.save()
         self.screening_identifier = self.screening.screening_identifier
 
@@ -40,6 +27,7 @@ class TestScreeningPartTwo(TestCase):
         self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)
 
+    @tag("1")
     def test_eligible(self):
 
         obj = ScreeningPartTwo.objects.get(
@@ -48,14 +36,12 @@ class TestScreeningPartTwo(TestCase):
         self.assertEqual(obj.eligible_part_one, YES)
         self.assertTrue(obj.reasons_ineligible_part_one == "")
 
-        obj.part_two_report_datetime = get_utcnow()
-        obj.urine_bhcg_performed = NO
-        obj.congestive_heart_failure = NO
-        obj.liver_disease = NO
-        obj.alcoholism = NO
-        obj.acute_metabolic_acidosis = NO
-        obj.renal_function_condition = NO
-        obj.tissue_hypoxia_condition = NO
+        for k, v in part_two_eligible_options.items():
+            setattr(obj, k, v)
+        obj.acute_condition = None
+        obj.metformin_sensitivity = None
+        obj.advised_to_fast = NO
+        obj.appt_datetime = None
         obj.save()
 
         self.assertEqual(obj.eligible_part_two, TBD)
