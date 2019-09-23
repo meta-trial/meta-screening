@@ -10,7 +10,7 @@ Screening models
     :target: https://pypi.python.org/pypi/meta-screening
     
 .. |travis| image:: https://travis-ci.com/meta-trial/meta-screening.svg?branch=develop
-    :target: https://travis-ci.org/meta-trial/meta-screening
+    :target: https://travis-ci.com/meta-trial/meta-screening
     
 .. |codecov| image:: https://codecov.io/gh/meta-trial/meta-screening/branch/develop/graph/badge.svg
   :target: https://codecov.io/gh/meta-trial/meta-screening
