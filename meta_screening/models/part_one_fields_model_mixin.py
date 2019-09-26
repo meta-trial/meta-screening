@@ -7,6 +7,7 @@ from django.db import models
 from edc_constants.choices import PREG_YES_NO_NA, YES_NO, YES_NO_NA
 
 from ..choices import ETHNICITY
+from django_crypto_fields.fields.encrypted_char_field import EncryptedCharField
 
 
 class PartOneFieldsModelMixin(models.Model):
@@ -20,10 +21,9 @@ class PartOneFieldsModelMixin(models.Model):
         choices=YES_NO,
     )
 
-    hospital_identifier = models.CharField(max_length=25, unique=True)
+    hospital_identifier = EncryptedCharField(unique=True)
 
-    initials = models.CharField(
-        max_length=3,
+    initials = EncryptedCharField(
         validators=[
             RegexValidator("[A-Z]{1,3}", "Invalid format"),
             MinLengthValidator(2),
