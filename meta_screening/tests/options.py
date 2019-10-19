@@ -1,14 +1,15 @@
 from edc_constants.constants import YES, BLACK, FEMALE, NOT_APPLICABLE, TBD, NO
-from edc_utils.date import get_utcnow
 from dateutil.relativedelta import relativedelta
 from edc_reportable.units import MILLIMOLES_PER_LITER, MICROMOLES_PER_LITER
+import arrow
+from datetime import datetime
 
-now = get_utcnow()
+now = arrow.get(datetime(2019, 5, 5), "UTC").datetime
 tomorrow = now + relativedelta(days=1)
 
 part_one_eligible_options = dict(
     screening_consent=YES,
-    report_datetime=get_utcnow(),
+    report_datetime=now,
     hospital_identifier="111",
     initials="ZZ",
     gender=FEMALE,

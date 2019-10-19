@@ -133,10 +133,11 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
             )
         except NoReverseMatch:
             url = reverse(url_names.get("screening_listboard_url"), kwargs={})
-            context = dict(title=_("Go to screening listboard"),
-                           url=f"{url}?q={obj.screening_identifier}",
-                           label=label)
+            context = dict(
+                title=_("Go to screening listboard"),
+                url=f"{url}?q={obj.screening_identifier}",
+                label=label,
+            )
         else:
-            context = dict(title=_("Go to subject dashboard"),
-                           url=url, label=label)
+            context = dict(title=_("Go to subject dashboard"), url=url, label=label)
         return render_to_string("dashboard_button.html", context=context)

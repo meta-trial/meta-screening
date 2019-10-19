@@ -14,8 +14,7 @@ class ScreeningPartTwoFormValidator(FormValidator):
             self.eligible_part_one, field_applicable="advised_to_fast"
         )
 
-        self.required_if(YES, field="advised_to_fast",
-                         field_required="appt_datetime")
+        self.required_if(YES, field="advised_to_fast", field_required="appt_datetime")
 
         self.raise_if_not_future_appt_datetime()
 
@@ -34,7 +33,8 @@ class ScreeningPartTwoFormValidator(FormValidator):
 
     def validate_pregnancy(self):
         self.applicable_if(
-            YES, NO,
+            YES,
+            NO,
             field="pregnant",
             field_applicable="urine_bhcg_performed",
             is_instance_field=True,
@@ -49,11 +49,14 @@ class ScreeningPartTwoFormValidator(FormValidator):
 
         if self.instance.pregnant == YES and self.cleaned_data.get("urine_bhcg") == NEG:
             raise forms.ValidationError(
-                {"urine_bhcg": "Invalid, part one says subject is pregnant"})
-        elif (self.instance.pregnant == NO
-              and self.cleaned_data.get("urine_bhcg") == POS):
+                {"urine_bhcg": "Invalid, part one says subject is pregnant"}
+            )
+        elif (
+            self.instance.pregnant == NO and self.cleaned_data.get("urine_bhcg") == POS
+        ):
             raise forms.ValidationError(
-                {"urine_bhcg": "Invalid, part one says subject is not pregnant"})
+                {"urine_bhcg": "Invalid, part one says subject is not pregnant"}
+            )
 
     def raise_if_not_future_appt_datetime(self):
         """Raises if appt_datetime is not future relative to

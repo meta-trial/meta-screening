@@ -1,40 +1,9 @@
-from dateutil.relativedelta import relativedelta
 from edc_constants.constants import FEMALE, MALE, BLACK, OTHER
 from edc_reportable.units import (
     MILLIGRAMS_PER_DECILITER,
     MILLIMOLES_PER_LITER,
     MICROMOLES_PER_LITER,
 )
-from edc_reportable.normal_reference import NormalReference
-from edc_reportable.value_reference_group import ValueReferenceGroup
-from edc_utils.date import get_utcnow
-
-
-scr_reportable = ValueReferenceGroup(name="scr")
-ref = NormalReference(
-    name="scr",
-    lower=0.2,
-    upper=30.0,
-    lower_inclusive=True,
-    upper_inclusive=True,
-    units=MILLIGRAMS_PER_DECILITER,
-    gender=[MALE, FEMALE],
-    age_lower=18,
-    age_lower_inclusive=True,
-)
-scr_reportable.add_normal(ref)
-ref = NormalReference(
-    name="scr",
-    lower=40,
-    upper=130,
-    lower_inclusive=True,
-    upper_inclusive=True,
-    units=MICROMOLES_PER_LITER,
-    gender=[MALE, FEMALE],
-    age_lower=18,
-    age_lower_inclusive=True,
-)
-scr_reportable.add_normal(ref)
 
 
 class CalculatorError(Exception):
@@ -67,20 +36,18 @@ def converted_ogtt_two_hr(obj):
     return None
 
 
-def converted_creatinine(obj):
+def creatinine_to_umols_per_liter(value, units):
     """Return Serum creatinine in micro-mol/L or None.
     """
-    # TODO: verify creatinine unit conversion
-    if obj.creatinine:
-        if obj.creatinine_units == MILLIGRAMS_PER_DECILITER:
-            return float(obj.creatinine) * 88.42
-        elif obj.creatinine_units == MICROMOLES_PER_LITER:
-            return float(obj.creatinine)
+    converted = None
+    if value:
+        if units == MILLIGRAMS_PER_DECILITER:
+            converted = float(value) * 88.42
+        elif units == MICROMOLES_PER_LITER:
+            converted = float(value)
         else:
-            raise CalculatorUnitsError(
-                f"Invalid units for `creatinine`. Got {obj.creatinine_units}."
-            )
-    return None
+            raise CalculatorUnitsError(f"Invalid units for `creatinine`. Got {units}.")
+    return converted
 
 
 def calculate_bmi(obj):
@@ -97,8 +64,7 @@ def calculate_egfr(obj):
             gender=obj.gender,
             age=obj.age_in_years,
             ethnicity=obj.ethnicity,
-            scr=obj.converted_creatinine,
-            scr_units=MICROMOLES_PER_LITER,
+            scr=obj.converted_creatinine,  # umols/L
         )
         calculated_egfr = eGFR(**opts).value
     return calculated_egfr
@@ -131,19 +97,12 @@ class eGFR:
     Filtration Rate. Ann Intern Med. 2009; 150:604-612.
     """
 
-    def __init__(self, gender=None, age=None, ethnicity=None, scr=None, scr_units=None):
-
-        scr_units = MILLIGRAMS_PER_DECILITER if not scr_units else scr_units
-        if scr_units not in [MILLIGRAMS_PER_DECILITER, MICROMOLES_PER_LITER]:
-            raise CalculatorUnitsError(
-                f"Invalid serum creatine units. "
-                f"Expected on of {MILLIGRAMS_PER_DECILITER}, {MICROMOLES_PER_LITER}"
-            )
-        self.scr_units = scr_units
+    def __init__(self, gender=None, age=None, ethnicity=None, scr=None):
+        """Expects creatinine in umols/L.
+        """
 
         if not gender or gender not in [MALE, FEMALE]:
-            raise CalculatorError(
-                f"Invalid gender. Expected on of {MALE}, {FEMALE}")
+            raise CalculatorError(f"Invalid gender. Expected on of {MALE}, {FEMALE}")
         self.gender = gender
 
         if not (18 < (age or 0) < 120):
@@ -153,20 +112,7 @@ class eGFR:
         self.age = float(age)
 
         self.ethnicity = ethnicity or OTHER
-
-        normal = scr_reportable.get_normal(
-            value=scr,
-            gender=self.gender,
-            units=self.scr_units,
-            dob=get_utcnow() - relativedelta(years=self.age),
-        )
-
-        if not normal:
-            raise ImpossibleValueError(
-                f"Creatinine is abnormal. Got {scr}{self.scr_units}."
-            )
-
-        self.scr = float(scr) / 88.42  # serum creatinine mg/L
+        self.scr = float(scr / 88.42)
 
     @property
     def value(self):
