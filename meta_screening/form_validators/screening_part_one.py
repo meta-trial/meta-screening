@@ -8,8 +8,8 @@ class ScreeningPartOneFormValidator(FormValidator):
     def clean(self):
 
         if (
-            self.cleaned_data.get("screening_consent")
-            and self.cleaned_data.get("screening_consent") != YES
+            not self.cleaned_data.get("screening_consent")
+            or self.cleaned_data.get("screening_consent") != YES
         ):
             raise forms.ValidationError(
                 {
@@ -19,9 +19,11 @@ class ScreeningPartOneFormValidator(FormValidator):
                 }
             )
 
-        self.applicable_if(YES, field="hiv_pos", field_applicable="art_six_months")
+        self.applicable_if(YES, field="hiv_pos",
+                           field_applicable="art_six_months")
 
-        self.applicable_if(YES, field="hiv_pos", field_applicable="on_rx_stable")
+        self.applicable_if(YES, field="hiv_pos",
+                           field_applicable="on_rx_stable")
 
         self.not_applicable_if(
             MALE, field="gender", field_applicable="pregnant", inverse=False

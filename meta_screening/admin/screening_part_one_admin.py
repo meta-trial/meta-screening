@@ -25,7 +25,6 @@ class ScreeningPartOneAdmin(SubjectScreeningAdmin):
     )
 
     readonly_fields = (
-        # part two
         "part_two_report_datetime",
         "urine_bhcg_performed",
         "urine_bhcg",
@@ -44,6 +43,8 @@ class ScreeningPartOneAdmin(SubjectScreeningAdmin):
         "part_three_report_datetime",
         "weight",
         "height",
+        "sys_blood_pressure",
+        "dia_blood_pressure",
         "fasted",
         "fasted_duration_str",
         "hba1c_performed",

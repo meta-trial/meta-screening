@@ -1,12 +1,13 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from edc_constants.choices import YES_NO, YES
+from edc_model.models import BloodPressureModelMixin
 from edc_model.validators import hm_validator
 
 from ..choices import OGTT_UNITS, SERUM_CREATININE_UNITS
 
 
-class PartThreeFieldsModelMixin(models.Model):
+class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
 
     part_three_report_datetime = models.DateTimeField(
         verbose_name="Second stage report date and time",

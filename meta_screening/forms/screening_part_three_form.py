@@ -3,7 +3,8 @@ from edc_form_validators import FormValidatorMixin
 from edc_screening.modelform_mixins import AlreadyConsentedFormMixin
 
 from ..form_validators import ScreeningPartThreeFormValidator
-from ..models import SubjectScreening
+from ..models import ScreeningPartThree
+from .field_lists import part_three_fields
 
 
 class ScreeningPartThreeForm(
@@ -17,5 +18,5 @@ class ScreeningPartThreeForm(
         return cleaned_data
 
     class Meta:
-        model = SubjectScreening
-        fields = "__all__"
+        model = ScreeningPartThree
+        fields = part_three_fields

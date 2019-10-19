@@ -27,7 +27,6 @@ class TestScreeningPartTwo(TestCase):
         self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)
 
-    @tag("1")
     def test_eligible(self):
 
         obj = ScreeningPartTwo.objects.get(

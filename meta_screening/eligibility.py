@@ -2,6 +2,8 @@ from django.utils.safestring import mark_safe
 from edc_constants.constants import FEMALE, MALE, YES, TBD, NO
 from edc_utils.date import get_utcnow
 from django.core.exceptions import ObjectDoesNotExist
+from meta_screening.calculators import converted_creatinine, converted_ogtt_two_hr,\
+    calculate_bmi, calculate_egfr, ImpossibleValueError, CalculatorUnitsError
 
 
 class SubjectScreeningEligibilityError(Exception):
@@ -71,7 +73,8 @@ def calculate_eligible_final(obj):
             obj.eligible_part_three not in valid_opts,
         ]
     ):
-        opts = [obj.eligible_part_one, obj.eligible_part_two, obj.eligible_part_three]
+        opts = [obj.eligible_part_one,
+                obj.eligible_part_two, obj.eligible_part_three]
         raise SubjectScreeningEligibilityError(
             f"Invalid value for eligible. Got {opts}"
         )
@@ -111,7 +114,8 @@ def calculate_eligible_part_one(obj):
         "pregnant",
     ]
 
-    check_for_required_field_values(obj, required_fields, EligibilityPartOneError)
+    check_for_required_field_values(
+        obj, required_fields, EligibilityPartOneError)
 
     reasons_ineligible = []
     if obj.consent_ability == NO:
@@ -175,7 +179,14 @@ def calculate_eligible_part_three(obj):
         "inclusion_d",
         "ogtt_two_hr",
     ]
-    check_for_required_field_values(obj, required_fields, EligibilityPartThreeError)
+
+    obj.converted_creatinine = converted_creatinine(obj)
+    obj.converted_ogtt_two_hr = converted_ogtt_two_hr(obj)
+    obj.calculated_bmi = calculate_bmi(obj)
+    obj.calculated_egfr = calculate_egfr(obj)
+
+    check_for_required_field_values(
+        obj, required_fields, EligibilityPartThreeError)
 
     reasons_ineligible = []
 
@@ -229,7 +240,8 @@ def calculate_eligible_part_three(obj):
             obj.inclusion_d == TBD,
         ]
     ):
-        raise SubjectScreeningEligibilityError("Part 3 inclusion criteria incomplete")
+        raise SubjectScreeningEligibilityError(
+            "Part 3 inclusion criteria incomplete")
     if all(
         [
             obj.inclusion_a == NO,
@@ -267,7 +279,8 @@ def eligibility_status(obj):
 
 
 def eligibility_display_label(obj):
-    responses = [obj.eligible_part_one, obj.eligible_part_two, obj.eligible_part_three]
+    responses = [obj.eligible_part_one,
+                 obj.eligible_part_two, obj.eligible_part_three]
     if obj.eligible:
         display_label = '<font color="green"><B>ELIGIBLE</B></font>'
     elif TBD in responses and NO not in responses:

@@ -1,24 +1,27 @@
-from edc_sites.tests.site_test_case_mixin import SiteTestCaseMixin
-from meta_sites.sites import fqdn, meta_sites
-from edc_randomization.randomization_list_importer import RandomizationListImporter
+from dateutil.relativedelta import relativedelta
+from django.contrib.sites.models import Site
+from edc_constants.constants import YES
 from edc_facility.import_holidays import import_holidays
-from edc_randomization.models.randomization_list import RandomizationList
 from edc_facility.models import Holiday
-from meta_screening.models import (
+from edc_list_data.site_list_data import site_list_data
+from edc_randomization.models.randomization_list import RandomizationList
+from edc_randomization.randomization_list_importer import RandomizationListImporter
+from edc_sites.tests.site_test_case_mixin import SiteTestCaseMixin
+from edc_utils.date import get_utcnow
+from meta_sites.sites import fqdn, meta_sites
+from model_mommy import mommy
+
+from ..models import (
     ScreeningPartOne,
     ScreeningPartTwo,
     ScreeningPartThree,
     SubjectScreening,
 )
-from meta_screening.tests.options import (
+from .options import (
     part_one_eligible_options,
     part_two_eligible_options,
     part_three_eligible_options,
 )
-from edc_constants.constants import YES
-from model_mommy import mommy
-from edc_utils.date import get_utcnow
-from dateutil.relativedelta import relativedelta
 
 
 class MetaTestCaseMixin(SiteTestCaseMixin):
@@ -37,6 +40,7 @@ class MetaTestCaseMixin(SiteTestCaseMixin):
         if cls.import_randomization_list:
             RandomizationListImporter(verbose=False)
         import_holidays(test=True)
+        site_list_data.autodiscover()
 
     @classmethod
     def tearDownClass(cls):
@@ -83,4 +87,5 @@ class MetaTestCaseMixin(SiteTestCaseMixin):
             initials=subject_screening.initials,
             dob=get_utcnow().date()
             - relativedelta(years=subject_screening.age_in_years),
+            site=Site.objects.get(name="hindu_mandal"),
         )
