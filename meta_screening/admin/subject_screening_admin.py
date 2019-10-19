@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
 from django_audit_fields.admin import audit_fieldset_tuple
 from edc_model_admin import SimpleHistoryAdmin
 from edc_model_admin.dashboard import ModelAdminSubjectDashboardMixin
@@ -15,6 +16,10 @@ from .fieldsets import (
     get_part_three_fieldset,
     special_exclusion_fieldset,
 )
+from django.urls.exceptions import NoReverseMatch
+from django.template.loader import render_to_string
+from django.urls.base import reverse
+from edc_dashboard.url_names import url_names
 
 
 @admin.register(SubjectScreening, site=meta_screening_admin)
@@ -119,3 +124,19 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
 
     def eligiblity_status(self, obj=None):
         return mark_safe(eligibility_status(obj))
+
+    def dashboard(self, obj=None, label=None):
+        try:
+            url = reverse(
+                self.get_subject_dashboard_url_name(),
+                kwargs=self.get_subject_dashboard_url_kwargs(obj),
+            )
+        except NoReverseMatch:
+            url = reverse(url_names.get("screening_listboard_url"), kwargs={})
+            context = dict(title=_("Go to screening listboard"),
+                           url=f"{url}?q={obj.screening_identifier}",
+                           label=label)
+        else:
+            context = dict(title=_("Go to subject dashboard"),
+                           url=url, label=label)
+        return render_to_string("dashboard_button.html", context=context)

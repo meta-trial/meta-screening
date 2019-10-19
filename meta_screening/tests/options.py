@@ -3,7 +3,11 @@ from edc_utils.date import get_utcnow
 from dateutil.relativedelta import relativedelta
 from edc_reportable.units import MILLIMOLES_PER_LITER, MICROMOLES_PER_LITER
 
+now = get_utcnow()
+tomorrow = now + relativedelta(days=1)
+
 part_one_eligible_options = dict(
+    screening_consent=YES,
     report_datetime=get_utcnow(),
     hospital_identifier="111",
     initials="ZZ",
@@ -21,24 +25,27 @@ part_one_eligible_options = dict(
 
 
 part_two_eligible_options = dict(
-    part_two_report_datetime=get_utcnow(),
+    part_two_report_datetime=now,
     acute_condition=NO,
     acute_metabolic_acidosis=NO,
     advised_to_fast=YES,
     alcoholism=NO,
-    appt_datetime=get_utcnow() + relativedelta(days=1),
+    appt_datetime=now + relativedelta(days=1),
     congestive_heart_failure=NO,
     liver_disease=NO,
     metformin_sensitivity=NO,
     renal_function_condition=NO,
     tissue_hypoxia_condition=NO,
-    urine_bhcg_performed=NO,
+    urine_bhcg_performed=NOT_APPLICABLE,
+    urine_bhcg=NOT_APPLICABLE,
 )
 
 part_three_eligible_options = dict(
-    part_three_report_datetime=get_utcnow(),
+    part_three_report_datetime=now,
     weight=65,
     height=110,
+    sys_blood_pressure=180,
+    dia_blood_pressure=65,
     hba1c_performed=YES,
     hba1c=7.0,
     creatinine_performed=YES,
@@ -47,9 +54,9 @@ part_three_eligible_options = dict(
     fasted=YES,
     fasted_duration_str="8h",
     fasting_glucose=7.0,
-    fasting_glucose_datetime=get_utcnow(),
-    ogtt_base_datetime=get_utcnow(),
+    fasting_glucose_datetime=tomorrow,
+    ogtt_base_datetime=tomorrow + relativedelta(minutes=5),
     ogtt_two_hr=7.5,
     ogtt_two_hr_units=MILLIMOLES_PER_LITER,
-    ogtt_two_hr_datetime=get_utcnow(),
+    ogtt_two_hr_datetime=tomorrow + relativedelta(hours=2),
 )

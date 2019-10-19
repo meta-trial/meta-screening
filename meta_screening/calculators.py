@@ -142,7 +142,8 @@ class eGFR:
         self.scr_units = scr_units
 
         if not gender or gender not in [MALE, FEMALE]:
-            raise CalculatorError(f"Invalid gender. Expected on of {MALE}, {FEMALE}")
+            raise CalculatorError(
+                f"Invalid gender. Expected on of {MALE}, {FEMALE}")
         self.gender = gender
 
         if not (18 < (age or 0) < 120):

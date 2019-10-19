@@ -1,7 +1,10 @@
 from django import forms
 from edc_constants.constants import YES, NO
 from edc_form_validators import FormValidator
-from meta_screening.calculators import CalculatorError, BMI, eGFR
+
+from ..calculators import (
+    CalculatorError, BMI, eGFR, ImpossibleValueError, CalculatorUnitsError,
+)
 
 
 class ScreeningPartThreeFormValidator(FormValidator):
@@ -11,7 +14,8 @@ class ScreeningPartThreeFormValidator(FormValidator):
 
         self.validate_creatinine()
 
-        self.required_if(YES, field="fasted", field_required="fasted_duration_str")
+        self.required_if(YES, field="fasted",
+                         field_required="fasted_duration_str")
 
         self.required_if(YES, field="fasted", field_required="fasting_glucose")
 
@@ -114,11 +118,12 @@ class ScreeningPartThreeFormValidator(FormValidator):
             )
             try:
                 eGFR(**opts).value
-            except CalculatorError as e:
+            except (CalculatorError, CalculatorUnitsError, ImpossibleValueError) as e:
                 raise forms.ValidationError(e)
 
     def validate_creatinine(self):
-        self.required_if(YES, field="creatinine_performed", field_required="creatinine")
+        self.required_if(YES, field="creatinine_performed",
+                         field_required="creatinine")
         self.required_if_true(
             self.cleaned_data.get("creatinine"), field_required="creatinine_units"
         )
@@ -128,7 +133,8 @@ class ScreeningPartThreeFormValidator(FormValidator):
         ogtt_performed_dte = self.cleaned_data.get("ogtt_base_datetime")
         ogtt_two_hr_dte = self.cleaned_data.get("ogtt_two_hr_datetime")
         if fasting_glucose_dte and ogtt_performed_dte and ogtt_two_hr_dte:
-            total_seconds = (ogtt_performed_dte - fasting_glucose_dte).total_seconds()
+            total_seconds = (ogtt_performed_dte -
+                             fasting_glucose_dte).total_seconds()
             if total_seconds <= 1:
                 raise forms.ValidationError(
                     {

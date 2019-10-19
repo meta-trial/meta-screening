@@ -16,6 +16,9 @@ from .subject_screening_admin import SubjectScreeningAdmin
 @admin.register(ScreeningPartTwo, site=meta_screening_admin)
 class ScreeningPartTwoAdmin(SubjectScreeningAdmin):
 
+    post_url_on_delete_name = "screening_dashboard_url"
+    subject_listboard_url_name = "screening_listboard_url"
+
     form = ScreeningPartTwoForm
 
     fieldsets = (
@@ -46,6 +49,8 @@ class ScreeningPartTwoAdmin(SubjectScreeningAdmin):
         "part_three_report_datetime",
         "weight",
         "height",
+        "sys_blood_pressure",
+        "dia_blood_pressure",
         "fasted",
         "fasted_duration_str",
         "hba1c_performed",

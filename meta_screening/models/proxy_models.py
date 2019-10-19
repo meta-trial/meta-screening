@@ -6,6 +6,7 @@ from ..calculators import (
     converted_creatinine,
     converted_ogtt_two_hr,
     CalculatorError,
+    CalculatorUnitsError,
 )
 from ..eligibility import (
     calculate_eligible_part_one,
@@ -52,16 +53,6 @@ class ScreeningPartTwo(SubjectScreening):
 
 class ScreeningPartThree(SubjectScreening):
     def save(self, *args, **kwargs):
-        self.converted_creatinine = converted_creatinine(self)
-        self.converted_ogtt_two_hr = converted_ogtt_two_hr(self)
-        try:
-            self.calculated_bmi = calculate_bmi(self)
-        except CalculatorError:
-            pass
-        # try:
-        self.calculated_egfr = calculate_egfr(self)
-        #         except ImpossibleValueError:
-        #             pass
         try:
             calculate_eligible_part_three(self)
         except EligibilityPartThreeError:
