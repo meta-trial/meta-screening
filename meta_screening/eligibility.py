@@ -1,9 +1,13 @@
 from django.utils.safestring import mark_safe
 from edc_constants.constants import FEMALE, MALE, YES, TBD, NO
 from edc_utils.date import get_utcnow
-from django.core.exceptions import ObjectDoesNotExist
-from meta_screening.calculators import converted_creatinine, converted_ogtt_two_hr,\
-    calculate_bmi, calculate_egfr, ImpossibleValueError, CalculatorUnitsError
+
+from .calculators import (
+    creatinine_to_umols_per_liter,
+    converted_ogtt_two_hr,
+    calculate_bmi,
+    calculate_egfr,
+)
 
 
 class SubjectScreeningEligibilityError(Exception):
@@ -73,8 +77,7 @@ def calculate_eligible_final(obj):
             obj.eligible_part_three not in valid_opts,
         ]
     ):
-        opts = [obj.eligible_part_one,
-                obj.eligible_part_two, obj.eligible_part_three]
+        opts = [obj.eligible_part_one, obj.eligible_part_two, obj.eligible_part_three]
         raise SubjectScreeningEligibilityError(
             f"Invalid value for eligible. Got {opts}"
         )
@@ -114,8 +117,7 @@ def calculate_eligible_part_one(obj):
         "pregnant",
     ]
 
-    check_for_required_field_values(
-        obj, required_fields, EligibilityPartOneError)
+    check_for_required_field_values(obj, required_fields, EligibilityPartOneError)
 
     reasons_ineligible = []
     if obj.consent_ability == NO:
@@ -171,7 +173,7 @@ def calculate_eligible_part_three(obj):
     """
     required_fields = [
         "calculated_bmi",
-        "calculated_egfr",
+        # "calculated_egfr",
         "fasting_glucose",
         "inclusion_a",
         "inclusion_b",
@@ -180,13 +182,12 @@ def calculate_eligible_part_three(obj):
         "ogtt_two_hr",
     ]
 
-    obj.converted_creatinine = converted_creatinine(obj)
+    obj.converted_creatinine = creatinine_to_umols_per_liter(
+        obj.creatinine, obj.creatinine_units
+    )
     obj.converted_ogtt_two_hr = converted_ogtt_two_hr(obj)
     obj.calculated_bmi = calculate_bmi(obj)
-    obj.calculated_egfr = calculate_egfr(obj)
-
-    check_for_required_field_values(
-        obj, required_fields, EligibilityPartThreeError)
+    check_for_required_field_values(obj, required_fields, EligibilityPartThreeError)
 
     reasons_ineligible = []
 
@@ -240,8 +241,9 @@ def calculate_eligible_part_three(obj):
             obj.inclusion_d == TBD,
         ]
     ):
-        raise SubjectScreeningEligibilityError(
-            "Part 3 inclusion criteria incomplete")
+        reasons_ineligible.append("BMI/IFT/OGTT incomplete")
+    #         raise SubjectScreeningEligibilityError(
+    #             "Part 3 inclusion criteria incomplete")
     if all(
         [
             obj.inclusion_a == NO,
@@ -251,7 +253,10 @@ def calculate_eligible_part_three(obj):
         ]
     ):
         reasons_ineligible.append("BMI/IFT/OGTT")
-    if obj.calculated_egfr < 45.0:
+    obj.calculated_egfr = calculate_egfr(obj)
+    if not obj.calculated_egfr:
+        reasons_ineligible.append("eGFR not calculated")
+    elif obj.calculated_egfr < 45.0:
         reasons_ineligible.append("eGFR<45")
     eligible = NO if reasons_ineligible else YES
     obj.eligible_part_three = eligible
@@ -279,8 +284,7 @@ def eligibility_status(obj):
 
 
 def eligibility_display_label(obj):
-    responses = [obj.eligible_part_one,
-                 obj.eligible_part_two, obj.eligible_part_three]
+    responses = [obj.eligible_part_one, obj.eligible_part_two, obj.eligible_part_three]
     if obj.eligible:
         display_label = '<font color="green"><B>ELIGIBLE</B></font>'
     elif TBD in responses and NO not in responses:

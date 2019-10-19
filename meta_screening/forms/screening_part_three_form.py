@@ -15,6 +15,11 @@ class ScreeningPartThreeForm(
 
     def clean(self):
         cleaned_data = super().clean()
+
+        if cleaned_data.get("creatinine"):
+            if float(cleaned_data.get("creatinine")) > 9999.0:
+                raise forms.ValidationError({"creatinine": "Value is absurd."})
+
         return cleaned_data
 
     class Meta:

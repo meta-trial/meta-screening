@@ -3,7 +3,7 @@ from edc_constants.constants import YES, BLACK, FEMALE, NOT_APPLICABLE, TBD, NO
 from edc_reportable.units import MICROMOLES_PER_LITER, MILLIMOLES_PER_LITER
 from edc_utils.date import get_utcnow
 
-from ..calculators import CalculatorUnitsError, ImpossibleValueError
+from ..calculators import CalculatorUnitsError
 from ..models import ScreeningPartOne, ScreeningPartTwo, ScreeningPartThree
 from .options import part_two_eligible_options, part_three_eligible_options
 
@@ -100,16 +100,6 @@ class TestScreeningPartThree(TestCase):
         self.assertFalse(obj.reasons_ineligible_part_three)
         self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)
-
-        obj.creatinine_performed = YES
-        obj.creatinine = 20.0
-        obj.creatinine_units = MICROMOLES_PER_LITER
-        try:
-            obj.save()
-        except ImpossibleValueError:
-            pass
-        else:
-            self.fail("ImpossibleValueError unexpectedly not raised.")
 
         obj.creatinine_performed = YES
         obj.creatinine = 50
