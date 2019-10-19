@@ -173,7 +173,7 @@ def calculate_eligible_part_three(obj):
     """
     required_fields = [
         "calculated_bmi",
-        "calculated_egfr",
+        # "calculated_egfr",
         "fasting_glucose",
         "inclusion_a",
         "inclusion_b",
@@ -187,8 +187,6 @@ def calculate_eligible_part_three(obj):
     )
     obj.converted_ogtt_two_hr = converted_ogtt_two_hr(obj)
     obj.calculated_bmi = calculate_bmi(obj)
-    obj.calculated_egfr = calculate_egfr(obj)
-
     check_for_required_field_values(obj, required_fields, EligibilityPartThreeError)
 
     reasons_ineligible = []
@@ -243,7 +241,9 @@ def calculate_eligible_part_three(obj):
             obj.inclusion_d == TBD,
         ]
     ):
-        raise SubjectScreeningEligibilityError("Part 3 inclusion criteria incomplete")
+        reasons_ineligible.append("BMI/IFT/OGTT incomplete")
+    #         raise SubjectScreeningEligibilityError(
+    #             "Part 3 inclusion criteria incomplete")
     if all(
         [
             obj.inclusion_a == NO,
@@ -253,7 +253,10 @@ def calculate_eligible_part_three(obj):
         ]
     ):
         reasons_ineligible.append("BMI/IFT/OGTT")
-    if obj.calculated_egfr < 45.0:
+    obj.calculated_egfr = calculate_egfr(obj)
+    if not obj.calculated_egfr:
+        reasons_ineligible.append("eGFR not calculated")
+    elif obj.calculated_egfr < 45.0:
         reasons_ineligible.append("eGFR<45")
     eligible = NO if reasons_ineligible else YES
     obj.eligible_part_three = eligible
