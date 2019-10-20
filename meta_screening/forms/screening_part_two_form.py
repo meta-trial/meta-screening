@@ -13,6 +13,8 @@ class ScreeningPartTwoForm(
 
     form_validator_cls = ScreeningPartTwoFormValidator
 
+    AUTO_NUMBER_START = 17
+
     def clean(self):
         cleaned_data = super().clean()
         return cleaned_data

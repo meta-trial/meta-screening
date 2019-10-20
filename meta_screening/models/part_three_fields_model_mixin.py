@@ -5,6 +5,7 @@ from edc_model.models import BloodPressureModelMixin
 from edc_model.validators import hm_validator
 
 from ..choices import OGTT_UNITS, SERUM_CREATININE_UNITS
+from edc_reportable.units import MILLIMOLES_PER_LITER
 
 
 class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
@@ -20,7 +21,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
         null=True,
         blank=False,
         max_digits=8,
-        decimal_places=4,
+        decimal_places=2,
         validators=[MinValueValidator(15), MaxValueValidator(135)],
         help_text="in kgs",
     )
@@ -64,7 +65,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
     hba1c = models.DecimalField(
         verbose_name="HbA1c",
         max_digits=8,
-        decimal_places=4,
+        decimal_places=2,
         null=True,
         blank=True,
         help_text="in %",
@@ -81,7 +82,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
     creatinine = models.DecimalField(
         verbose_name="Serum creatinine levels",
         max_digits=8,
-        decimal_places=4,
+        decimal_places=2,
         null=True,
         blank=True,
     )
@@ -98,11 +99,11 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
     fasting_glucose = models.DecimalField(
         verbose_name="Fasting glucose levels",
         max_digits=8,
-        decimal_places=4,
+        decimal_places=2,
         validators=[MinValueValidator(1), MaxValueValidator(50)],
         null=True,
         blank=True,
-        help_text="mmol/L",
+        help_text="in mmol/L",
     )
 
     fasting_glucose_datetime = models.DateTimeField(
@@ -119,18 +120,20 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
     ogtt_two_hr = models.DecimalField(
         verbose_name="Blood glucose levels 2-hours after glucose solution given",
         max_digits=8,
-        decimal_places=4,
+        decimal_places=2,
         validators=[MinValueValidator(1), MaxValueValidator(300)],
         null=True,
         blank=True,
+        help_text="in mmol/L",
     )
 
     ogtt_two_hr_units = models.CharField(
         verbose_name="Units (Blood glucose)",
         max_length=15,
         choices=OGTT_UNITS,
-        null=True,
         blank=True,
+        editable=False,
+        default=MILLIMOLES_PER_LITER,
     )
 
     ogtt_two_hr_datetime = models.DateTimeField(

@@ -1,6 +1,6 @@
 from django.db import models
-from edc_constants.choices import YES_NO, POS_NEG_NA, PREG_YES_NO_NA
-from edc_constants.constants import NOT_APPLICABLE
+from edc_constants.choices import YES_NO, POS_NEG_NA, PREG_YES_NO_NA, YES_NO_NA
+from edc_constants.constants import NOT_APPLICABLE, NO
 
 from ..choices import YES_NO_NOT_ELIGIBLE
 
@@ -134,13 +134,20 @@ class PartTwoFieldsModelMixin(models.Model):
         ),
     )
 
+    already_fasted = models.CharField(
+        verbose_name="Has the patient come to the clinic today already fasted?",
+        max_length=15,
+        choices=YES_NO_NOT_ELIGIBLE,
+        default=NO,
+    )
+
     advised_to_fast = models.CharField(
         verbose_name=(
             "Has the patient been advised to return fasted for the second "
             "stage of the screening?"
         ),
         max_length=15,
-        choices=YES_NO_NOT_ELIGIBLE,
+        choices=YES_NO_NA,
         default=NOT_APPLICABLE,
     )
 
@@ -148,6 +155,10 @@ class PartTwoFieldsModelMixin(models.Model):
         verbose_name="Appointment date for second stage of screening",
         null=True,
         blank=True,
+        help_text=(
+            "You may use today's date if the patient has already fasted and has "
+            "agreed to complete the second stage of screening today"
+        ),
     )
 
     class Meta:

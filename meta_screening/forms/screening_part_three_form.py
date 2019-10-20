@@ -13,6 +13,8 @@ class ScreeningPartThreeForm(
 
     form_validator_cls = ScreeningPartThreeFormValidator
 
+    AUTO_NUMBER_START = 31
+
     def clean(self):
         cleaned_data = super().clean()
 
