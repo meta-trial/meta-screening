@@ -83,6 +83,7 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
     )
 
     radio_fields = {
+        "already_fasted": admin.VERTICAL,
         "acute_condition": admin.VERTICAL,
         "acute_metabolic_acidosis": admin.VERTICAL,
         "advised_to_fast": admin.VERTICAL,
