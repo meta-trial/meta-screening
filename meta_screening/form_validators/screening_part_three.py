@@ -1,5 +1,5 @@
 from django import forms
-from edc_constants.constants import YES, NO
+from edc_constants.constants import YES, NO, POS, NEG
 from edc_form_validators import FormValidator
 
 from ..calculators import (
@@ -26,6 +26,8 @@ class ScreeningPartThreeFormValidator(FormValidator):
             self.cleaned_data.get("fasting_glucose"),
             field_required="fasting_glucose_datetime",
         )
+
+        self.validate_pregnancy()
 
         self.required_if_true(
             self.cleaned_data.get("ogtt_two_hr"), field_required="ogtt_two_hr_units"
@@ -155,3 +157,30 @@ class ScreeningPartThreeFormValidator(FormValidator):
                         )
                     }
                 )
+
+    def validate_pregnancy(self):
+        self.applicable_if(
+            YES,
+            NO,
+            field="pregnant",
+            field_applicable="urine_bhcg_performed",
+            is_instance_field=True,
+            msg="See response in part one.",
+        )
+        self.applicable_if(
+            YES, field="urine_bhcg_performed", field_applicable="urine_bhcg"
+        )
+        self.required_if(
+            YES, field="urine_bhcg_performed", field_required="urine_bhcg_date"
+        )
+
+        if self.instance.pregnant == YES and self.cleaned_data.get("urine_bhcg") == NEG:
+            raise forms.ValidationError(
+                {"urine_bhcg": "Invalid, part one says subject is pregnant"}
+            )
+        elif (
+            self.instance.pregnant == NO and self.cleaned_data.get("urine_bhcg") == POS
+        ):
+            raise forms.ValidationError(
+                {"urine_bhcg": "Invalid, part one says subject is not pregnant"}
+            )

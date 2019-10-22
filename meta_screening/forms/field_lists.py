@@ -40,6 +40,7 @@ part_three_fields = (
     "ogtt_base_datetime",
     "height",
     "weight",
+    "waist_circumference",
     "sys_blood_pressure",
     "dia_blood_pressure",
     "urine_bhcg_performed",
