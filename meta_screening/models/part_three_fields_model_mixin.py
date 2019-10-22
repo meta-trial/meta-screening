@@ -26,10 +26,22 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
         help_text="in kgs",
     )
 
-    height = models.IntegerField(
+    height = models.DecimalField(
         null=True,
         blank=False,
-        validators=[MinValueValidator(100), MaxValueValidator(230)],
+        max_digits=5,
+        decimal_places=1,
+        validators=[MinValueValidator(100.0), MaxValueValidator(230.0)],
+        help_text="in centimeters",
+    )
+
+    waist_circumference = models.DecimalField(
+        verbose_name="Waist circumference",
+        max_digits=5,
+        decimal_places=1,
+        validators=[MinValueValidator(50.0), MaxValueValidator(175.0)],
+        null=True,
+        blank=False,
         help_text="in centimeters",
     )
 
@@ -111,14 +123,14 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
     )
 
     ogtt_base_datetime = models.DateTimeField(
-        verbose_name="Time oral glucose tolerance test was performed",
+        verbose_name="Time oral glucose solution was given",
         null=True,
         blank=True,
         help_text="(glucose solution given)",
     )
 
     ogtt_two_hr = models.DecimalField(
-        verbose_name="Blood glucose levels 2-hours after glucose solution given",
+        verbose_name="Blood glucose level 2-hours after glucose solution given",
         max_digits=8,
         decimal_places=2,
         validators=[MinValueValidator(1), MaxValueValidator(300)],
@@ -137,9 +149,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
     )
 
     ogtt_two_hr_datetime = models.DateTimeField(
-        verbose_name="Time blood glucose levels tested after glucose solution given",
-        null=True,
-        blank=True,
+        verbose_name="Time blood glucose levels 2-hours measured", null=True, blank=True
     )
 
     class Meta:

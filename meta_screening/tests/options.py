@@ -37,14 +37,14 @@ part_two_eligible_options = dict(
     metformin_sensitivity=NO,
     renal_function_condition=NO,
     tissue_hypoxia_condition=NO,
-    urine_bhcg_performed=NOT_APPLICABLE,
-    urine_bhcg=NOT_APPLICABLE,
+    already_fasted=NO,
 )
 
 part_three_eligible_options = dict(
     part_three_report_datetime=now,
     weight=65,
     height=110,
+    waist_circumference=130,
     sys_blood_pressure=180,
     dia_blood_pressure=65,
     hba1c_performed=YES,
@@ -60,4 +60,6 @@ part_three_eligible_options = dict(
     ogtt_two_hr=7.5,
     ogtt_two_hr_units=MILLIMOLES_PER_LITER,
     ogtt_two_hr_datetime=tomorrow + relativedelta(hours=2),
+    urine_bhcg_performed=NOT_APPLICABLE,
+    urine_bhcg=NOT_APPLICABLE,
 )
