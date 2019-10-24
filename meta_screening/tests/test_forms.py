@@ -191,10 +191,11 @@ class TestForms(ScreeningTestMixin, TestCase):
 
         # if pregnant == NOT_APPLICABLE, urine_bhcg_performed is not applicable
         try:
-            self.part_three_form(
+            ScreeningPartThreeForm(
+                data=dict(
+                    urine_bhcg=NOT_APPLICABLE, urine_bhcg_performed=NOT_APPLICABLE
+                ),
                 instance=instance,
-                urine_bhcg=NOT_APPLICABLE,
-                urine_bhcg_performed=NOT_APPLICABLE,
             )
         except AssertionError:
             self.fail("AssertionError unexpectedly raised.")
