@@ -105,7 +105,7 @@ class eGFR:
             raise CalculatorError(f"Invalid gender. Expected on of {MALE}, {FEMALE}")
         self.gender = gender
 
-        if not (18 < (age or 0) < 120):
+        if not (18 <= (age or 0) < 120):
             raise CalculatorError(
                 f"Invalid age. See {self.__class__.__name__}. Got {age}"
             )
