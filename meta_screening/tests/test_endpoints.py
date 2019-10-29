@@ -6,7 +6,7 @@
 # from model_mommy import mommy
 # from webtest.app import AppError
 # from django.test.utils import override_settings, tag
-# from edc_permissions import EVERYONE
+# from edc_auth import EVERYONE
 #
 # User = get_user_model()
 #
