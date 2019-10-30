@@ -1,5 +1,7 @@
 from dateutil.relativedelta import relativedelta
 from django.contrib.sites.models import Site
+from edc_auth import codenames_by_group
+from edc_auth.update import update_group_permissions
 from edc_constants.constants import YES
 from edc_facility.import_holidays import import_holidays
 from edc_facility.models import Holiday
@@ -41,6 +43,7 @@ class MetaTestCaseMixin(SiteTestCaseMixin):
             RandomizationListImporter(verbose=False)
         import_holidays(test=True)
         site_list_data.autodiscover()
+        update_group_permissions(codenames_by_group=codenames_by_group, verbose=True)
 
     @classmethod
     def tearDownClass(cls):
