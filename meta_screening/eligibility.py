@@ -8,6 +8,7 @@ from .calculators import (
     calculate_bmi,
     calculate_egfr,
 )
+from .constants import EGFR_NOT_CALCULATED
 
 
 class SubjectScreeningEligibilityError(Exception):
@@ -255,7 +256,7 @@ def calculate_eligible_part_three(obj):
         reasons_ineligible.append("BMI/IFT/OGTT")
     obj.calculated_egfr = calculate_egfr(obj)
     if not obj.calculated_egfr:
-        reasons_ineligible.append("eGFR not calculated")
+        reasons_ineligible.append(EGFR_NOT_CALCULATED)
     elif obj.calculated_egfr < 45.0:
         reasons_ineligible.append("eGFR<45")
     eligible = NO if reasons_ineligible else YES
@@ -289,6 +290,12 @@ def eligibility_display_label(obj):
         display_label = '<font color="green"><B>ELIGIBLE</B></font>'
     elif TBD in responses and NO not in responses:
         display_label = '<font color="orange"><B>PENDING</B></font>'
+    elif (
+        obj.eligible_part_one == YES
+        and obj.eligible_part_two == YES
+        and obj.reasons_ineligible == EGFR_NOT_CALCULATED
+    ):
+        display_label = '<font color="orange"><B>PENDING (SCR/eGFR)</B></font>'
     else:
         display_label = "<B>not eligible</B>"
     return display_label
