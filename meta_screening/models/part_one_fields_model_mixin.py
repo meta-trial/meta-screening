@@ -3,11 +3,12 @@ from django.core.validators import (
     MinLengthValidator,
     RegexValidator,
 )
+from django_crypto_fields.fields import EncryptedCharField
 from django.db import models
-from edc_constants.choices import PREG_YES_NO_NA, YES_NO, YES_NO_NA
+from edc_constants.choices import YES_NO, YES_NO_NA
 
 from ..choices import ETHNICITY
-from django_crypto_fields.fields.encrypted_char_field import EncryptedCharField
+from ..constants import PREG_YES_NO_NA
 
 
 class PartOneFieldsModelMixin(models.Model):
