@@ -1,5 +1,7 @@
 from dateutil.relativedelta import relativedelta
 from django.contrib.sites.models import Site
+from edc_appointment.constants import IN_PROGRESS_APPT
+from edc_appointment.models import Appointment
 from edc_auth import codenames_by_group
 from edc_auth.update import update_group_permissions
 from edc_constants.constants import YES
@@ -10,7 +12,10 @@ from edc_randomization.models.randomization_list import RandomizationList
 from edc_randomization.randomization_list_importer import RandomizationListImporter
 from edc_sites.tests.site_test_case_mixin import SiteTestCaseMixin
 from edc_utils.date import get_utcnow
+from edc_visit_tracking.constants import SCHEDULED
 from meta_sites.sites import fqdn, meta_sites
+from meta_subject.models import SubjectVisit
+from meta_visit_schedule.constants import DAY1
 from model_mommy import mommy
 
 from ..models import (
@@ -43,7 +48,7 @@ class MetaTestCaseMixin(SiteTestCaseMixin):
             RandomizationListImporter(verbose=False)
         import_holidays(test=True)
         site_list_data.autodiscover()
-        update_group_permissions(codenames_by_group=codenames_by_group, verbose=True)
+        update_group_permissions(codenames_by_group=codenames_by_group, verbose=False)
 
     @classmethod
     def tearDownClass(cls):
@@ -92,3 +97,15 @@ class MetaTestCaseMixin(SiteTestCaseMixin):
             - relativedelta(years=subject_screening.age_in_years),
             site=Site.objects.get(name="hindu_mandal"),
         )
+
+    def get_subject_visit(self):
+        subject_screening = self.get_subject_screening()
+        subject_consent = self.get_subject_consent(subject_screening)
+        subject_identifier = subject_consent.subject_identifier
+
+        appointment = Appointment.objects.get(
+            subject_identifier=subject_identifier, visit_code=DAY1
+        )
+        appointment.appt_status = IN_PROGRESS_APPT
+        appointment.save()
+        return SubjectVisit.objects.create(appointment=appointment, reason=SCHEDULED)
