@@ -1,5 +1,5 @@
 from edc_constants.constants import MALE
-from edc_constants.constants import YES, NO, NEG, POS
+from edc_constants.constants import YES
 from edc_form_validators import FormValidator
 from django import forms
 
@@ -25,4 +25,8 @@ class ScreeningPartOneFormValidator(FormValidator):
 
         self.not_applicable_if(
             MALE, field="gender", field_applicable="pregnant", inverse=False
+        )
+
+        self.required_if(
+            YES, field="unsuitable_for_study", field_required="reasons_unsuitable"
         )

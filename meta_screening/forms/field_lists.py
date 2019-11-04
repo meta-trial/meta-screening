@@ -1,5 +1,6 @@
 part_one_fields = (
     "screening_consent",
+    "selection_method",
     "report_datetime",
     "hospital_identifier",
     "initials",
@@ -13,6 +14,7 @@ part_one_fields = (
     "staying_nearby",
     "pregnant",
     "consent_ability",
+    "continue_part_two",
 )
 
 part_two_fields = (
