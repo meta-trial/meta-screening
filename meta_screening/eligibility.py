@@ -142,6 +142,8 @@ def calculate_eligible_part_one(obj):
     eligible = NO if reasons_ineligible else YES
     obj.eligible_part_one = eligible
     obj.reasons_ineligible_part_one = "|".join(reasons_ineligible)
+    if obj.eligible_part_one == YES or obj.eligible_part_two != TBD:
+        obj.continue_part_two = YES
 
 
 def calculate_eligible_part_two(obj):

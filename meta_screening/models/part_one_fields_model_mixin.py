@@ -3,11 +3,13 @@ from django.core.validators import (
     MinLengthValidator,
     RegexValidator,
 )
-from django_crypto_fields.fields import EncryptedCharField
 from django.db import models
-from edc_constants.choices import YES_NO, YES_NO_NA
+from django.utils.safestring import mark_safe
+from django_crypto_fields.fields import EncryptedCharField
+from edc_constants.choices import YES_NO, YES_NO_NA, YESDEFAULT_NO
+from edc_constants.constants import YES
 
-from ..choices import ETHNICITY
+from ..choices import ETHNICITY, SELECTION_METHOD
 from ..constants import PREG_YES_NO_NA
 
 
@@ -20,6 +22,12 @@ class PartOneFieldsModelMixin(models.Model):
         ),
         max_length=15,
         choices=YES_NO,
+    )
+
+    selection_method = models.CharField(
+        verbose_name="How was the patient selected from the outpatients CTC?",
+        max_length=25,
+        choices=SELECTION_METHOD,
     )
 
     hospital_identifier = EncryptedCharField(unique=True)
@@ -75,6 +83,21 @@ class PartOneFieldsModelMixin(models.Model):
 
     pregnant = models.CharField(
         verbose_name="Is the patient pregnant?", max_length=15, choices=PREG_YES_NO_NA
+    )
+
+    continue_part_two = models.CharField(
+        verbose_name=mark_safe(
+            "Continue with <U>part two</U> of the screening process?"
+        ),
+        max_length=15,
+        choices=YESDEFAULT_NO,
+        default=YES,
+        help_text=mark_safe(
+            "<B>Important</B>: This response will be be automatically "
+            "set to YES if:<BR><BR>"
+            "- the participant meets the eligibility criteria for part one;<BR><BR>"
+            "- the eligibility criteria for part two is already complete.<BR>"
+        ),
     )
 
     class Meta:
