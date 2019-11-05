@@ -8,13 +8,11 @@ from ..forms import (
     part_three_fields,
     calculated_fields,
 )
-
 from ..models import ScreeningPartOne
 from .fieldsets import (
     get_part_one_fieldset,
     get_part_two_fieldset,
     get_part_three_fieldset,
-    special_exclusion_fieldset,
 )
 from .subject_screening_admin import SubjectScreeningAdmin
 
@@ -28,7 +26,6 @@ class ScreeningPartOneAdmin(SubjectScreeningAdmin):
         get_part_one_fieldset(),
         get_part_two_fieldset(collapse=True),
         get_part_three_fieldset(collapse=True),
-        special_exclusion_fieldset,
         audit_fieldset_tuple,
     )
 
