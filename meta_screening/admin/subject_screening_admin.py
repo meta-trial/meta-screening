@@ -14,7 +14,6 @@ from .fieldsets import (
     get_part_one_fieldset,
     get_part_two_fieldset,
     get_part_three_fieldset,
-    special_exclusion_fieldset,
 )
 from django.urls.exceptions import NoReverseMatch
 from django.template.loader import render_to_string
@@ -39,7 +38,6 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
         get_part_one_fieldset(),
         get_part_two_fieldset(),
         get_part_three_fieldset(),
-        special_exclusion_fieldset,
         calculated_values_fieldset,
         audit_fieldset_tuple,
     )

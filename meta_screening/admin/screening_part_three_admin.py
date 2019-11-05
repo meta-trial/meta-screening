@@ -14,7 +14,6 @@ from .fieldsets import (
     get_part_one_fieldset,
     get_part_two_fieldset,
     get_part_three_fieldset,
-    special_exclusion_fieldset,
 )
 from .subject_screening_admin import SubjectScreeningAdmin
 
@@ -28,7 +27,6 @@ class ScreeningPartThreeAdmin(SubjectScreeningAdmin):
         get_part_one_fieldset(collapse=True),
         get_part_two_fieldset(collapse=True),
         get_part_three_fieldset(),
-        special_exclusion_fieldset,
         calculated_values_fieldset,
         audit_fieldset_tuple,
     )
