@@ -25,7 +25,6 @@ class TestScreeningPartThree(TestCase):
             lives_nearby=YES,
             staying_nearby=YES,
             pregnant=NOT_APPLICABLE,
-            consent_ability=YES,
         )
         obj.save()
         self.screening_identifier = obj.screening_identifier

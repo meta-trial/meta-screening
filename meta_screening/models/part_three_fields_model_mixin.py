@@ -1,11 +1,11 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from edc_constants.choices import YES_NO, YES
+from edc_constants.choices import YES_NO, NO
 from edc_model.models import BloodPressureModelMixin
 from edc_model.validators import hm_validator
+from edc_reportable.units import MILLIMOLES_PER_LITER
 
 from ..choices import OGTT_UNITS, SERUM_CREATININE_UNITS
-from edc_reportable.units import MILLIMOLES_PER_LITER
 
 
 class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
@@ -17,9 +17,25 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
         help_text="Date and time of report.",
     )
 
+    sys_blood_pressure = models.IntegerField(
+        verbose_name="Blood pressure: systolic",
+        validators=[MinValueValidator(50), MaxValueValidator(220)],
+        null=True,
+        blank=True,
+        help_text="in mm. format SYS, e.g. 120",
+    )
+
+    dia_blood_pressure = models.IntegerField(
+        verbose_name="Blood pressure: diastolic",
+        validators=[MinValueValidator(20), MaxValueValidator(150)],
+        null=True,
+        blank=True,
+        help_text="in Hg. format DIA, e.g. 80",
+    )
+
     weight = models.DecimalField(
         null=True,
-        blank=False,
+        blank=True,
         max_digits=8,
         decimal_places=2,
         validators=[MinValueValidator(15), MaxValueValidator(135)],
@@ -28,7 +44,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
 
     height = models.DecimalField(
         null=True,
-        blank=False,
+        blank=True,
         max_digits=5,
         decimal_places=1,
         validators=[MinValueValidator(100.0), MaxValueValidator(230.0)],
@@ -41,7 +57,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
         decimal_places=1,
         validators=[MinValueValidator(50.0), MaxValueValidator(175.0)],
         null=True,
-        blank=False,
+        blank=True,
         help_text="in centimeters",
     )
 
@@ -70,7 +86,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
         verbose_name="Was the HbA1c performed?",
         max_length=15,
         choices=YES_NO,
-        default=YES,
+        default=NO,
         help_text="",
     )
 
@@ -87,7 +103,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
         verbose_name="Was the serum creatinine performed?",
         max_length=15,
         choices=YES_NO,
-        default=YES,
+        default=NO,
         help_text="",
     )
 

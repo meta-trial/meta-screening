@@ -13,7 +13,6 @@ part_one_fields = (
     "lives_nearby",
     "staying_nearby",
     "pregnant",
-    "consent_ability",
     "continue_part_two",
 )
 
@@ -32,14 +31,8 @@ part_two_fields = (
     "appt_datetime",
 )
 
-part_three_fields = (
-    "fasted",
-    "fasted_duration_str",
-    "fasting_glucose_datetime",
-    "fasting_glucose",
-    "hba1c_performed",
-    "hba1c",
-    "ogtt_base_datetime",
+
+part_three_vitals_fields = (
     "height",
     "weight",
     "waist_circumference",
@@ -48,12 +41,32 @@ part_three_fields = (
     "urine_bhcg_performed",
     "urine_bhcg",
     "urine_bhcg_date",
+)
+
+part_three_glucose_fields = (
+    "fasted",
+    "fasted_duration_str",
+    "fasting_glucose_datetime",
+    "fasting_glucose",
+    "ogtt_base_datetime",
     "ogtt_two_hr_datetime",
     "ogtt_two_hr",
+)
+
+part_three_other_fields = (
     "creatinine_performed",
     "creatinine",
     "creatinine_units",
+    "hba1c_performed",
+    "hba1c",
 )
+
+part_three_fields = (
+    *part_three_glucose_fields,
+    *part_three_other_fields,
+    *part_three_vitals_fields,
+)
+
 
 calculated_fields = (
     "calculated_bmi",
