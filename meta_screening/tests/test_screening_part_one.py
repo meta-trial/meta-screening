@@ -18,7 +18,7 @@ class TestSubjectScreening(TestCase):
         )
         obj.save()
         self.assertEqual(obj.eligible_part_one, TBD)
-        self.assertTrue(obj.reasons_ineligible_part_one == "")
+        self.assertTrue(obj.reasons_ineligible_part_one is None)
         self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)
         self.assertIsNotNone(obj.screening_identifier)
@@ -57,7 +57,6 @@ class TestSubjectScreening(TestCase):
             lives_nearby=YES,
             staying_nearby=NO,
             pregnant=NOT_APPLICABLE,
-            consent_ability=YES,
         )
         obj.save()
         self.assertEqual(obj.eligible_part_one, NO)

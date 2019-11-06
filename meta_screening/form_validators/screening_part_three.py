@@ -14,11 +14,9 @@ from ..calculators import (
 class ScreeningPartThreeFormValidator(FormValidator):
     def clean(self):
 
-        self.required_if(YES, field="hba1c_performed", field_required="hba1c")
-
-        self.validate_creatinine()
-
         self.required_if(YES, field="fasted", field_required="fasted_duration_str")
+
+        self.required_if(YES, field="fasted", field_required="fasting_glucose_datetime")
 
         self.required_if(YES, field="fasted", field_required="fasting_glucose")
 
@@ -27,14 +25,20 @@ class ScreeningPartThreeFormValidator(FormValidator):
             field_required="fasting_glucose_datetime",
         )
 
-        self.validate_pregnancy()
-
         self.required_if_true(
-            self.cleaned_data.get("ogtt_two_hr"), field_required="ogtt_two_hr_units"
+            self.cleaned_data.get("ogtt_two_hr_datetime"),
+            field_required="ogtt_two_hr",
+            inverse=False,
         )
 
         self.required_if_true(
-            self.cleaned_data.get("ogtt_two_hr"), field_required="ogtt_two_hr_datetime"
+            self.cleaned_data.get("ogtt_two_hr"),
+            field_required="ogtt_two_hr_datetime",
+            inverse=False,
+        )
+
+        self.required_if_true(
+            self.cleaned_data.get("ogtt_two_hr"), field_required="ogtt_two_hr_units"
         )
 
         self.not_required_if(
@@ -49,6 +53,14 @@ class ScreeningPartThreeFormValidator(FormValidator):
         self.not_required_if(
             NO, field="fasted", field_not_required="ogtt_two_hr_units", inverse=False
         )
+
+        self.validate_creatinine()
+
+        self.required_if(YES, field="hba1c_performed", field_required="hba1c")
+
+        self.validate_vitals()
+
+        self.validate_pregnancy()
 
         self.validate_ogtt_dates()
 
@@ -184,3 +196,22 @@ class ScreeningPartThreeFormValidator(FormValidator):
             raise forms.ValidationError(
                 {"urine_bhcg": "Invalid, part one says subject is not pregnant"}
             )
+
+    def validate_vitals(self):
+        fields = [
+            "height",
+            "weight",
+            "waist_circumference",
+            "sys_blood_pressure",
+            "dia_blood_pressure",
+        ]
+        if (
+            self.cleaned_data.get("height")
+            or self.cleaned_data.get("weight")
+            or self.cleaned_data.get("waist_circumference")
+            or self.cleaned_data.get("sys_blood_pressure")
+            or self.cleaned_data.get("dia_blood_pressure")
+        ):
+            for field in fields:
+                if not self.cleaned_data.get(field):
+                    raise forms.ValidationError({field: "This field is required"})

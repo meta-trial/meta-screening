@@ -30,7 +30,7 @@ class PartOneFieldsModelMixin(models.Model):
         choices=SELECTION_METHOD,
     )
 
-    hospital_identifier = EncryptedCharField(unique=True)
+    hospital_identifier = EncryptedCharField(unique=True, blank=False)
 
     initials = EncryptedCharField(
         validators=[
@@ -39,6 +39,7 @@ class PartOneFieldsModelMixin(models.Model):
             MaxLengthValidator(3),
         ],
         help_text="Use UPPERCASE letters only. May be 2 or 3 letters.",
+        blank=False,
     )
 
     ethnicity = models.CharField(
@@ -95,7 +96,7 @@ class PartOneFieldsModelMixin(models.Model):
         help_text=mark_safe(
             "<B>Important</B>: This response will be be automatically "
             "set to YES if:<BR><BR>"
-            "- the participant meets the eligibility criteria for part one;<BR><BR>"
+            "- the participant meets the eligibility criteria for part one, or;<BR><BR>"
             "- the eligibility criteria for part two is already complete.<BR>"
         ),
     )

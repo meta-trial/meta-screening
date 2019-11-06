@@ -7,8 +7,14 @@ from .calculators import (
     converted_ogtt_two_hr,
     calculate_bmi,
     calculate_egfr,
+    calculate_inclusion_field_values,
 )
-from .constants import EGFR_NOT_CALCULATED
+from .constants import (
+    EGFR_NOT_CALCULATED,
+    BMI_IFT_OGTT_INCOMPLETE,
+    BMI_IFT_OGTT,
+    EGFR_LT_45,
+)
 
 
 class SubjectScreeningEligibilityError(Exception):
@@ -106,8 +112,10 @@ def calculate_eligible_part_one(obj):
     and `reasons_ineligible_part_one`.
     """
 
+    obj.eligible_part_one = TBD
+    obj.reasons_ineligible_part_one = None
+
     required_fields = [
-        "consent_ability",
         "gender",
         "age_in_years",
         "hiv_pos",
@@ -121,8 +129,6 @@ def calculate_eligible_part_one(obj):
     check_for_required_field_values(obj, required_fields, EligibilityPartOneError)
 
     reasons_ineligible = []
-    if obj.consent_ability == NO:
-        reasons_ineligible.append("Unable/unwilling to consent")
     if obj.gender not in [MALE, FEMALE]:
         reasons_ineligible.append("gender invalid")
     if obj.age_in_years < 18:
@@ -150,6 +156,8 @@ def calculate_eligible_part_two(obj):
     """Updates model instance fields `eligible_part_two`
     and `reasons_ineligible_part_two`.
     """
+    obj.eligible_part_two = TBD
+    obj.reasons_ineligible_part_two = None
 
     check_for_required_field_values(obj, part2_fields, EligibilityPartTwoError)
 
@@ -174,67 +182,24 @@ def calculate_eligible_part_three(obj):
     """Updates model instance fields `eligible_part_three`
     and `reasons_ineligible_part_three`.
     """
-    required_fields = [
-        "calculated_bmi",
-        # "calculated_egfr",
-        "fasting_glucose",
-        "inclusion_a",
-        "inclusion_b",
-        "inclusion_c",
-        "inclusion_d",
-        "ogtt_two_hr",
-    ]
+    obj.eligible_part_three = TBD
+    obj.reasons_ineligible_part_three = None
 
     obj.converted_creatinine = creatinine_to_umols_per_liter(
         obj.creatinine, obj.creatinine_units
     )
+
     obj.converted_ogtt_two_hr = converted_ogtt_two_hr(obj)
+
     obj.calculated_bmi = calculate_bmi(obj)
-    check_for_required_field_values(obj, required_fields, EligibilityPartThreeError)
+
+    a, b, c, d = calculate_inclusion_field_values(obj)
+    obj.inclusion_a = a
+    obj.inclusion_b = b
+    obj.inclusion_c = c
+    obj.inclusion_d = d
 
     reasons_ineligible = []
-
-    # BMI>30 combined with impaired fasting glucose (6.1 to 6.9 mmol/L)
-    if (
-        obj.calculated_bmi > 30.0
-        and obj.fasting_glucose >= 6.1
-        and obj.fasting_glucose <= 6.9
-    ):
-        obj.inclusion_a = YES
-    else:
-        obj.inclusion_a = NO
-
-    # BMI>30 combined with impaired glucose tolerance at
-    # 2 hours (7.0 to 11.10 mmol/L)
-    if (
-        obj.calculated_bmi > 30.0
-        and obj.converted_ogtt_two_hr >= 7.0
-        and obj.converted_ogtt_two_hr <= 11.10
-    ):
-        obj.inclusion_b = YES
-    else:
-        obj.inclusion_b = NO
-
-    # BMI<=30 combined with impaired fasting glucose (6.3 to 6.9 mmol/L)
-    if (
-        obj.calculated_bmi <= 30.0
-        and obj.fasting_glucose >= 6.3
-        and obj.fasting_glucose <= 6.9
-    ):
-        obj.inclusion_c = YES
-    else:
-        obj.inclusion_c = NO
-
-    # BMI<=30 combined with impaired glucose tolerance at 2 hours
-    # (9.0 to 11.10 mmol/L)
-    if (
-        obj.calculated_bmi <= 30.0
-        and obj.converted_ogtt_two_hr >= 9.0
-        and obj.converted_ogtt_two_hr <= 11.10
-    ):
-        obj.inclusion_d = YES
-    else:
-        obj.inclusion_d = NO
 
     if any(
         [
@@ -244,9 +209,9 @@ def calculate_eligible_part_three(obj):
             obj.inclusion_d == TBD,
         ]
     ):
-        reasons_ineligible.append("BMI/IFT/OGTT incomplete")
-    #         raise SubjectScreeningEligibilityError(
-    #             "Part 3 inclusion criteria incomplete")
+        reasons_ineligible.append(BMI_IFT_OGTT_INCOMPLETE)
+        obj.eligible_part_three = TBD
+
     if all(
         [
             obj.inclusion_a == NO,
@@ -255,14 +220,27 @@ def calculate_eligible_part_three(obj):
             obj.inclusion_d == NO,
         ]
     ):
-        reasons_ineligible.append("BMI/IFT/OGTT")
-    obj.calculated_egfr = calculate_egfr(obj)
-    if not obj.calculated_egfr:
-        reasons_ineligible.append(EGFR_NOT_CALCULATED)
-    elif obj.calculated_egfr < 45.0:
-        reasons_ineligible.append("eGFR<45")
-    eligible = NO if reasons_ineligible else YES
-    obj.eligible_part_three = eligible
+        reasons_ineligible.append(BMI_IFT_OGTT)
+        obj.eligible_part_three = NO
+
+    if not reasons_ineligible:
+        obj.calculated_egfr = calculate_egfr(obj)
+        if not obj.calculated_egfr:
+            reasons_ineligible.append(EGFR_NOT_CALCULATED)
+            obj.eligible_part_three = TBD
+        elif obj.calculated_egfr < 45.0:
+            reasons_ineligible.append(EGFR_LT_45)
+            obj.eligible_part_three = NO
+
+    if not reasons_ineligible:
+        obj.eligible_part_three = YES
+    elif (
+        BMI_IFT_OGTT_INCOMPLETE not in reasons_ineligible
+        and EGFR_NOT_CALCULATED not in reasons_ineligible
+    ):
+        obj.eligible_part_three = NO
+    # eligible = NO if reasons_ineligible else YES
+    # obj.eligible_part_three = eligible
     obj.reasons_ineligible_part_three = "|".join(reasons_ineligible)
 
 
@@ -283,23 +261,35 @@ def eligibility_status(obj):
     )
     display_label = eligibility_display_label(obj)
 
+    if "PENDING" in display_label:
+        display_label = f'<font color="orange"><B>{display_label}</B></font>'
+
     return status_str + display_label
 
 
 def eligibility_display_label(obj):
     responses = [obj.eligible_part_one, obj.eligible_part_two, obj.eligible_part_three]
     if obj.eligible:
-        display_label = '<font color="green"><B>ELIGIBLE</B></font>'
+        display_label = "ELIGIBLE"
     elif TBD in responses and NO not in responses:
-        display_label = '<font color="orange"><B>PENDING</B></font>'
+        if obj.reasons_ineligible == EGFR_NOT_CALCULATED:
+            display_label = "PENDING (SCR/eGFR)"
+        else:
+            display_label = "PENDING"
+    elif (
+        obj.eligible_part_one == YES
+        and obj.eligible_part_two == YES
+        and BMI_IFT_OGTT_INCOMPLETE in obj.reasons_ineligible
+    ):
+        display_label = "PENDING (BMI/IFT/OGTT)"
     elif (
         obj.eligible_part_one == YES
         and obj.eligible_part_two == YES
         and obj.reasons_ineligible == EGFR_NOT_CALCULATED
     ):
-        display_label = '<font color="orange"><B>PENDING (SCR/eGFR)</B></font>'
+        display_label = "PENDING (SCR/eGFR)"
     else:
-        display_label = "<B>not eligible</B>"
+        display_label = "not eligible"
     return display_label
 
 

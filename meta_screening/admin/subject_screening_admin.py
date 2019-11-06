@@ -26,7 +26,7 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
 
     form = SubjectScreeningForm
 
-    post_url_on_delete_name = "screening_dashboard_url"
+    post_url_on_delete_name = "screening_listboard_url"
     subject_listboard_url_name = "screening_listboard_url"
 
     additional_instructions = (
@@ -88,7 +88,6 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
         "alcoholism": admin.VERTICAL,
         "art_six_months": admin.VERTICAL,
         "congestive_heart_failure": admin.VERTICAL,
-        "consent_ability": admin.VERTICAL,
         "continue_part_two": admin.VERTICAL,
         "creatinine_performed": admin.VERTICAL,
         "creatinine_units": admin.VERTICAL,
@@ -112,6 +111,9 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
         "urine_bhcg": admin.VERTICAL,
         "urine_bhcg_performed": admin.VERTICAL,
     }
+
+    def post_url_on_delete_kwargs(self, request, obj):
+        return {}
 
     def demographics(self, obj=None):
         return mark_safe(

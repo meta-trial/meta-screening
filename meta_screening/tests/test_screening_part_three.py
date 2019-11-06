@@ -4,6 +4,12 @@ from edc_reportable.units import MICROMOLES_PER_LITER, MILLIMOLES_PER_LITER
 from edc_utils.date import get_utcnow
 
 from ..calculators import CalculatorUnitsError
+from ..constants import (
+    EGFR_NOT_CALCULATED,
+    BMI_IFT_OGTT,
+    BMI_IFT_OGTT_INCOMPLETE,
+    EGFR_LT_45,
+)
 from ..models import ScreeningPartOne, ScreeningPartTwo, ScreeningPartThree
 from .options import part_two_eligible_options, part_three_eligible_options
 
@@ -24,7 +30,6 @@ class TestScreeningPartThree(TestCase):
             lives_nearby=YES,
             staying_nearby=YES,
             pregnant=NOT_APPLICABLE,
-            consent_ability=YES,
         )
         obj.save()
         self.screening_identifier = obj.screening_identifier
@@ -76,7 +81,7 @@ class TestScreeningPartThree(TestCase):
         obj.save()
 
         self.assertEqual(obj.eligible_part_three, TBD)
-        self.assertFalse(obj.reasons_ineligible_part_three)
+        self.assertEqual(obj.reasons_ineligible_part_three, BMI_IFT_OGTT_INCOMPLETE)
         self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)
 
@@ -87,7 +92,8 @@ class TestScreeningPartThree(TestCase):
         obj.save()
 
         self.assertEqual(obj.eligible_part_three, TBD)
-        self.assertFalse(obj.reasons_ineligible_part_three)
+        self.assertEqual(obj.reasons_ineligible_part_three, BMI_IFT_OGTT_INCOMPLETE)
+
         self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)
 
@@ -97,7 +103,7 @@ class TestScreeningPartThree(TestCase):
         obj.save()
 
         self.assertEqual(obj.eligible_part_three, TBD)
-        self.assertFalse(obj.reasons_ineligible_part_three)
+        self.assertEqual(obj.reasons_ineligible_part_three, BMI_IFT_OGTT_INCOMPLETE)
         self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)
 
@@ -107,7 +113,7 @@ class TestScreeningPartThree(TestCase):
         obj.save()
 
         self.assertEqual(obj.eligible_part_three, TBD)
-        self.assertFalse(obj.reasons_ineligible_part_three)
+        self.assertEqual(obj.reasons_ineligible_part_three, BMI_IFT_OGTT_INCOMPLETE)
         self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)
 
@@ -115,7 +121,7 @@ class TestScreeningPartThree(TestCase):
         obj.save()
 
         self.assertEqual(obj.eligible_part_three, TBD)
-        self.assertFalse(obj.reasons_ineligible_part_three)
+        self.assertEqual(obj.reasons_ineligible_part_three, BMI_IFT_OGTT_INCOMPLETE)
         self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)
 
@@ -126,7 +132,7 @@ class TestScreeningPartThree(TestCase):
         obj.save()
 
         self.assertEqual(obj.eligible_part_three, TBD)
-        self.assertFalse(obj.reasons_ineligible_part_three)
+        self.assertEqual(obj.reasons_ineligible_part_three, BMI_IFT_OGTT_INCOMPLETE)
         self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)
 
@@ -145,7 +151,7 @@ class TestScreeningPartThree(TestCase):
         obj.save()
 
         self.assertEqual(obj.eligible_part_three, NO)
-        self.assertIn("BMI/IFT/OGTT", obj.reasons_ineligible_part_three)
+        self.assertIn(BMI_IFT_OGTT, obj.reasons_ineligible_part_three)
         self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)
 
@@ -158,4 +164,72 @@ class TestScreeningPartThree(TestCase):
         self.assertEqual(obj.eligible_part_three, YES)
         self.assertFalse(obj.reasons_ineligible_part_three)
         self.assertTrue(obj.eligible)
+        self.assertFalse(obj.consented)
+
+    def test_tbd_eligible_egfr_not_calculated(self):
+
+        obj = ScreeningPartThree.objects.get(
+            screening_identifier=self.screening_identifier
+        )
+        self.assertEqual(obj.eligible_part_one, YES)
+        self.assertFalse(obj.reasons_ineligible_part_one)
+        self.assertEqual(obj.eligible_part_two, YES)
+        self.assertFalse(obj.reasons_ineligible_part_two)
+
+        obj.part_three_report_datetime = get_utcnow()
+        obj.part_three_report_datetime = get_utcnow()
+        obj.weight = 65
+        obj.height = 110
+        obj.hba1c_performed = YES
+        obj.hba1c = 7.0
+        obj.creatinine_performed = NO
+        #         obj.creatinine = 50
+        #         obj.creatinine_units = MICROMOLES_PER_LITER
+        obj.fasted = YES
+        obj.fasted_duration_str = "8h"
+        obj.fasting_glucose = 7.0
+        obj.fasting_glucose_datetime = get_utcnow()
+        obj.ogtt_base_datetime = get_utcnow()
+        obj.ogtt_two_hr = 7.5
+        obj.ogtt_two_hr_units = MILLIMOLES_PER_LITER
+        obj.ogtt_two_hr_datetime = get_utcnow()
+        obj.save()
+
+        self.assertEqual(obj.eligible_part_three, TBD)
+        self.assertIn(EGFR_NOT_CALCULATED, obj.reasons_ineligible_part_three)
+        self.assertFalse(obj.eligible)
+        self.assertFalse(obj.consented)
+
+    def test_not_eligible_egfr_less_than_45(self):
+
+        obj = ScreeningPartThree.objects.get(
+            screening_identifier=self.screening_identifier
+        )
+        self.assertEqual(obj.eligible_part_one, YES)
+        self.assertFalse(obj.reasons_ineligible_part_one)
+        self.assertEqual(obj.eligible_part_two, YES)
+        self.assertFalse(obj.reasons_ineligible_part_two)
+
+        obj.part_three_report_datetime = get_utcnow()
+        obj.part_three_report_datetime = get_utcnow()
+        obj.weight = 65
+        obj.height = 110
+        obj.hba1c_performed = YES
+        obj.hba1c = 7.0
+        obj.creatinine_performed = NO
+        obj.creatinine = 200
+        obj.creatinine_units = MICROMOLES_PER_LITER
+        obj.fasted = YES
+        obj.fasted_duration_str = "8h"
+        obj.fasting_glucose = 7.0
+        obj.fasting_glucose_datetime = get_utcnow()
+        obj.ogtt_base_datetime = get_utcnow()
+        obj.ogtt_two_hr = 7.5
+        obj.ogtt_two_hr_units = MILLIMOLES_PER_LITER
+        obj.ogtt_two_hr_datetime = get_utcnow()
+        obj.save()
+
+        self.assertEqual(obj.eligible_part_three, NO)
+        self.assertIn(EGFR_LT_45, obj.reasons_ineligible_part_three)
+        self.assertFalse(obj.eligible)
         self.assertFalse(obj.consented)

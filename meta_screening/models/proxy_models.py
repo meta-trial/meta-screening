@@ -1,4 +1,4 @@
-from edc_constants.constants import TBD
+from edc_constants.constants import YES
 
 from ..eligibility import (
     calculate_eligible_part_one,
@@ -7,7 +7,6 @@ from ..eligibility import (
     check_eligible_final,
     EligibilityPartOneError,
     EligibilityPartTwoError,
-    EligibilityPartThreeError,
 )
 from .subject_screening import SubjectScreening
 
@@ -17,10 +16,8 @@ class ScreeningPartOne(SubjectScreening):
         try:
             calculate_eligible_part_one(self)
         except EligibilityPartOneError:
-            self.eligible_part_one = TBD
-            self.reasons_ineligible_part_one = ""
-        else:
-            check_eligible_final(self)
+            pass
+        check_eligible_final(self)
         super().save(*args, **kwargs)
 
     class Meta:
@@ -34,7 +31,8 @@ class ScreeningPartTwo(SubjectScreening):
         try:
             calculate_eligible_part_two(self)
         except EligibilityPartTwoError:
-            check_eligible_final(self)
+            pass
+        check_eligible_final(self)
         super().save(*args, **kwargs)
 
     class Meta:
@@ -45,12 +43,8 @@ class ScreeningPartTwo(SubjectScreening):
 
 class ScreeningPartThree(SubjectScreening):
     def save(self, *args, **kwargs):
-        try:
-            calculate_eligible_part_three(self)
-        except EligibilityPartThreeError:
-            pass
-        else:
-            check_eligible_final(self)
+        calculate_eligible_part_three(self)
+        check_eligible_final(self)
         super().save(*args, **kwargs)
 
     class Meta:

@@ -25,7 +25,6 @@ screeningpartone = Recipe(
     on_rx_stable=YES,
     lives_nearby=YES,
     staying_nearby=YES,
-    consent_ability=YES,
     pregnant=NO,
     site=Site.objects.get_current(),
     part_two_report_datetime=get_utcnow() - relativedelta(days=1),

@@ -4,12 +4,15 @@ from edc_reportable.units import MILLIMOLES_PER_LITER, MICROMOLES_PER_LITER
 import arrow
 from datetime import datetime
 
+from ..constants import RANDOM_SAMPLING
+
 now = arrow.get(datetime(2019, 5, 5), "UTC").datetime
 tomorrow = now + relativedelta(days=1)
 
 part_one_eligible_options = dict(
     screening_consent=YES,
     report_datetime=now,
+    selection_method=RANDOM_SAMPLING,
     hospital_identifier="111",
     initials="ZZ",
     gender=FEMALE,
@@ -21,7 +24,7 @@ part_one_eligible_options = dict(
     lives_nearby=YES,
     staying_nearby=YES,
     pregnant=NOT_APPLICABLE,
-    consent_ability=YES,
+    continue_part_two=YES,
 )
 
 
