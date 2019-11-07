@@ -1,9 +1,9 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.utils.safestring import mark_safe
 from edc_constants.choices import YES_NO, NO
 from edc_model.models import BloodPressureModelMixin
 from edc_model.validators import hm_validator
-from edc_reportable.units import MILLIMOLES_PER_LITER
 
 from ..choices import GLUCOSE_UNITS, SERUM_CREATININE_UNITS
 
@@ -108,7 +108,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
     )
 
     creatinine = models.DecimalField(
-        verbose_name="Creatinine <u>level</u>",
+        verbose_name=mark_safe("Creatinine <u>level</u>"),
         max_digits=8,
         decimal_places=2,
         null=True,
@@ -125,7 +125,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
 
     # IFG
     fasting_glucose = models.DecimalField(
-        verbose_name="Fasting glucose <u>level</u>",
+        verbose_name=mark_safe("Fasting glucose <u>level</u>"),
         max_digits=8,
         decimal_places=2,
         null=True,
@@ -141,21 +141,21 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
     )
 
     fasting_glucose_datetime = models.DateTimeField(
-        verbose_name="<u>Time</u> fasting glucose <u>level</u> measured",
+        verbose_name=mark_safe("<u>Time</u> fasting glucose <u>level</u> measured"),
         null=True,
         blank=True,
     )
 
     ogtt_base_datetime = models.DateTimeField(
-        verbose_name="<u>Time</u> oral glucose solution was given",
+        verbose_name=mark_safe("<u>Time</u> oral glucose solution was given"),
         null=True,
         blank=True,
         help_text="(glucose solution given)",
     )
 
     ogtt_two_hr = models.DecimalField(
-        verbose_name=(
-            "Blood glucose <u>level</u> 2-hours after oral glucose solution given"
+        verbose_name=mark_safe(
+            "Blood glucose <u>level</u> 2-hours " "after oral glucose solution given"
         ),
         max_digits=8,
         decimal_places=2,
@@ -172,7 +172,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
     )
 
     ogtt_two_hr_datetime = models.DateTimeField(
-        verbose_name=(
+        verbose_name=mark_safe(
             "<u>Time</u> blood glucose measured 2-hours "
             "after oral glucose solution given"
         ),
