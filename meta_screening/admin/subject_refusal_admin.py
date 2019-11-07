@@ -19,6 +19,7 @@ class SubjectRefusalAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin):
 
     post_url_on_delete_name = "screening_listboard_url"
     subject_listboard_url_name = "screening_listboard_url"
+    subject_dashboard_url_name = "screening_listboard_url"
 
     fieldsets = (
         [
