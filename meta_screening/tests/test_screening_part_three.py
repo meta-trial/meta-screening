@@ -1,9 +1,12 @@
 from django.test import TestCase, tag
 from edc_constants.constants import YES, BLACK, FEMALE, NOT_APPLICABLE, TBD, NO
-from edc_reportable.units import MICROMOLES_PER_LITER, MILLIMOLES_PER_LITER
+from edc_reportable import (
+    MICROMOLES_PER_LITER,
+    MILLIMOLES_PER_LITER,
+    ConversionNotHandled,
+)
 from edc_utils.date import get_utcnow
 
-from ..calculators import CalculatorUnitsError
 from ..constants import (
     EGFR_NOT_CALCULATED,
     BMI_IFT_OGTT,
@@ -142,10 +145,10 @@ class TestScreeningPartThree(TestCase):
         obj.ogtt_two_hr_datetime = get_utcnow()
         try:
             obj.save()
-        except CalculatorUnitsError:
+        except ConversionNotHandled:
             pass
         else:
-            self.fail("CalculatorUnitsError unexpectedly not raised.")
+            self.fail("ConversionNotHandled unexpectedly not raised.")
 
         obj.ogtt_two_hr_units = MILLIMOLES_PER_LITER
         obj.save()
@@ -188,6 +191,7 @@ class TestScreeningPartThree(TestCase):
         obj.fasted = YES
         obj.fasted_duration_str = "8h"
         obj.fasting_glucose = 7.0
+        obj.fasting_glucose_units = MILLIMOLES_PER_LITER
         obj.fasting_glucose_datetime = get_utcnow()
         obj.ogtt_base_datetime = get_utcnow()
         obj.ogtt_two_hr = 7.5

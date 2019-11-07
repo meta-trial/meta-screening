@@ -16,7 +16,7 @@ def refer_to_icp(obj):
     fasting_glucose = False
     ogtt_two_hr = False
     hba1c = False
-    if obj.fasting_glucose and obj.fasting_glucose >= 7.0:
+    if obj.converted_fasting_glucose and obj.converted_fasting_glucose >= 7.0:
         fasting_glucose = True
     if obj.converted_ogtt_two_hr and obj.converted_ogtt_two_hr >= 11.1:
         ogtt_two_hr = True
@@ -31,7 +31,7 @@ def refer_to_icp(obj):
 
 def update_or_create_icp_referral(obj):
     referral_reasons = []
-    if obj.fasting_glucose and obj.fasting_glucose >= 7.0:
+    if obj.converted_fasting_glucose and obj.converted_fasting_glucose >= 7.0:
         referral_reasons.append("fasting glucose >= 7.0")
     if obj.converted_ogtt_two_hr and obj.converted_ogtt_two_hr >= 11.1:
         referral_reasons.append("ogtt 2hr >= 11.1")
@@ -43,7 +43,7 @@ def update_or_create_icp_referral(obj):
         age_in_years=obj.age_in_years,
         art_six_months=obj.art_six_months,
         ethnicity=obj.ethnicity,
-        fasting_glucose=obj.fasting_glucose,
+        fasting_glucose=obj.converted_fasting_glucose,
         gender=obj.gender,
         hba1c=obj.hba1c,
         hiv_pos=obj.hiv_pos,

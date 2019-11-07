@@ -1,5 +1,3 @@
-from edc_constants.constants import YES
-
 from ..eligibility import (
     calculate_eligible_part_one,
     calculate_eligible_part_two,

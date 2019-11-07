@@ -5,6 +5,7 @@ from .field_lists import (
     part_three_glucose_fields,
     part_three_vitals_fields,
     part_three_other_fields,
+    part_three_pregnancy_fields,
     calculated_fields,
 )
 from .screening_part_one_form import ScreeningPartOneForm

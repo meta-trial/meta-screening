@@ -7,7 +7,9 @@ from ..forms import (
     part_three_glucose_fields,
     part_three_vitals_fields,
     part_three_other_fields,
+    part_three_pregnancy_fields,
 )
+from copy import copy
 
 
 def get_part_one_fieldset(collapse=None):
@@ -68,15 +70,23 @@ def get_part_three_vitals_fieldset(collapse=None):
     return ("Part 3c: Vitals", dct)
 
 
+def get_part_three_pregnancy_fieldset(collapse=None):
+    dct = {"fields": part_three_pregnancy_fields}
+    if collapse:
+        dct.update(classes=("collapse",))
+    return ("Part 3d: Pregnancy", dct)
+
+
 calculated_values_fieldset = (
     "Calculated values",
     {
         "classes": ("collapse",),
         "fields": (
             "calculated_bmi",
-            "calculated_egfr",
-            "converted_creatinine",
+            "converted_fasting_glucose",
             "converted_ogtt_two_hr",
+            "converted_creatinine",
+            "calculated_egfr",
             "inclusion_a",
             "inclusion_b",
             "inclusion_c",

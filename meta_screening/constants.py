@@ -16,3 +16,4 @@ PREG_YES_NO_NA = (
 
 PURPOSIVELY_SELECTED = "purposively_selected"
 RANDOM_SAMPLING = "random_sampling"
+CONVERSION_FACTOR = 18.018018
