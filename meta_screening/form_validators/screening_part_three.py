@@ -1,14 +1,7 @@
 from django import forms
 from edc_constants.constants import YES, NO, POS, NEG
 from edc_form_validators import FormValidator
-
-from ..calculators import (
-    CalculatorError,
-    BMI,
-    eGFR,
-    ImpossibleValueError,
-    CalculatorUnitsError,
-)
+from edc_reportable import ConversionNotHandled, CalculatorError, BMI, eGFR
 
 
 class ScreeningPartThreeFormValidator(FormValidator):
@@ -19,6 +12,16 @@ class ScreeningPartThreeFormValidator(FormValidator):
         self.required_if(YES, field="fasted", field_required="fasting_glucose_datetime")
 
         self.required_if(YES, field="fasted", field_required="fasting_glucose")
+
+        self.required_if_true(
+            self.cleaned_data.get("fasting_glucose_datetime"),
+            field_required="fasting_glucose",
+        )
+
+        self.required_if_true(
+            self.cleaned_data.get("fasting_glucose"),
+            field_required="fasting_glucose_units",
+        )
 
         self.required_if_true(
             self.cleaned_data.get("fasting_glucose"),
@@ -130,12 +133,12 @@ class ScreeningPartThreeFormValidator(FormValidator):
                 gender=self.cleaned_data.get("gender"),
                 age=self.cleaned_data.get("age_in_years"),
                 ethnicity=self.cleaned_data.get("ethnicity"),
-                scr=self.cleaned_data.get("creatinine"),
-                scr_units=self.cleaned_data.get("creatinine_units"),
+                creatinine=self.cleaned_data.get("creatinine"),
+                creatinine_units=self.cleaned_data.get("creatinine_units"),
             )
             try:
                 eGFR(**opts).value
-            except (CalculatorError, CalculatorUnitsError, ImpossibleValueError) as e:
+            except (CalculatorError, ConversionNotHandled) as e:
                 raise forms.ValidationError(e)
 
     def validate_creatinine(self):

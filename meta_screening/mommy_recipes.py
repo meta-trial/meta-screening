@@ -1,7 +1,7 @@
 from dateutil.relativedelta import relativedelta
 from django.contrib.sites.models import Site
 from edc_constants.constants import YES, NO, FEMALE, BLACK
-from edc_reportable.units import MILLIGRAMS_PER_DECILITER
+from edc_reportable.units import MILLIGRAMS_PER_DECILITER, MILLIMOLES_PER_LITER
 from edc_utils import get_utcnow
 from faker import Faker
 from model_mommy.recipe import Recipe
@@ -48,6 +48,7 @@ screeningpartone = Recipe(
     creatinine=0.6,
     creatinine_units=MILLIGRAMS_PER_DECILITER,
     fasting_glucose=6.9,
+    fasting_glucose_units=MILLIMOLES_PER_LITER,
     fasting_glucose_datetime=get_utcnow(),
     ogtt_base_datetime=get_utcnow(),
 )

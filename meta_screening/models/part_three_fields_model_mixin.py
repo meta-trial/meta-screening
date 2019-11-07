@@ -5,7 +5,7 @@ from edc_model.models import BloodPressureModelMixin
 from edc_model.validators import hm_validator
 from edc_reportable.units import MILLIMOLES_PER_LITER
 
-from ..choices import OGTT_UNITS, SERUM_CREATININE_UNITS
+from ..choices import GLUCOSE_UNITS, SERUM_CREATININE_UNITS
 
 
 class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
@@ -108,7 +108,7 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
     )
 
     creatinine = models.DecimalField(
-        verbose_name="Serum creatinine levels",
+        verbose_name="Creatinine <u>level</u>",
         max_digits=8,
         decimal_places=2,
         null=True,
@@ -125,47 +125,60 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
 
     # IFG
     fasting_glucose = models.DecimalField(
-        verbose_name="Fasting glucose levels",
+        verbose_name="Fasting glucose <u>level</u>",
         max_digits=8,
         decimal_places=2,
-        validators=[MinValueValidator(1), MaxValueValidator(50)],
         null=True,
         blank=True,
-        help_text="in mmol/L",
+    )
+
+    fasting_glucose_units = models.CharField(
+        verbose_name="Units (fasting glucose)",
+        max_length=15,
+        choices=GLUCOSE_UNITS,
+        blank=True,
+        null=True,
     )
 
     fasting_glucose_datetime = models.DateTimeField(
-        verbose_name="Time fasting glucose level measured", null=True, blank=True
+        verbose_name="<u>Time</u> fasting glucose <u>level</u> measured",
+        null=True,
+        blank=True,
     )
 
     ogtt_base_datetime = models.DateTimeField(
-        verbose_name="Time oral glucose solution was given",
+        verbose_name="<u>Time</u> oral glucose solution was given",
         null=True,
         blank=True,
         help_text="(glucose solution given)",
     )
 
     ogtt_two_hr = models.DecimalField(
-        verbose_name="Blood glucose level 2-hours after glucose solution given",
+        verbose_name=(
+            "Blood glucose <u>level</u> 2-hours after oral glucose solution given"
+        ),
         max_digits=8,
         decimal_places=2,
-        validators=[MinValueValidator(1), MaxValueValidator(300)],
         null=True,
         blank=True,
-        help_text="in mmol/L",
     )
 
     ogtt_two_hr_units = models.CharField(
-        verbose_name="Units (Blood glucose)",
+        verbose_name="Units (Blood glucose 2hrs after...)",
         max_length=15,
-        choices=OGTT_UNITS,
+        choices=GLUCOSE_UNITS,
         blank=True,
-        editable=False,
-        default=MILLIMOLES_PER_LITER,
+        null=True,
     )
 
     ogtt_two_hr_datetime = models.DateTimeField(
-        verbose_name="Time blood glucose levels 2-hours measured", null=True, blank=True
+        verbose_name=(
+            "<u>Time</u> blood glucose measured 2-hours "
+            "after oral glucose solution given"
+        ),
+        blank=True,
+        null=True,
+        help_text="(2 hours after glucose solution given)",
     )
 
     class Meta:

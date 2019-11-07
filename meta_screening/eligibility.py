@@ -1,14 +1,9 @@
 from django.utils.safestring import mark_safe
 from edc_constants.constants import FEMALE, MALE, YES, TBD, NO
+from edc_reportable import convert_units, MILLIMOLES_PER_LITER, MICROMOLES_PER_LITER
 from edc_utils.date import get_utcnow
 
-from .calculators import (
-    creatinine_to_umols_per_liter,
-    converted_ogtt_two_hr,
-    calculate_bmi,
-    calculate_egfr,
-    calculate_inclusion_field_values,
-)
+from .calculators import calculate_bmi, calculate_egfr, calculate_inclusion_field_values
 from .constants import (
     EGFR_NOT_CALCULATED,
     BMI_IFT_OGTT_INCOMPLETE,
@@ -185,11 +180,19 @@ def calculate_eligible_part_three(obj):
     obj.eligible_part_three = TBD
     obj.reasons_ineligible_part_three = None
 
-    obj.converted_creatinine = creatinine_to_umols_per_liter(
-        obj.creatinine, obj.creatinine_units
+    obj.converted_creatinine = convert_units(
+        obj.creatinine, units_from=obj.creatinine_units, units_to=MICROMOLES_PER_LITER
     )
 
-    obj.converted_ogtt_two_hr = converted_ogtt_two_hr(obj)
+    obj.converted_fasting_glucose = convert_units(
+        obj.fasting_glucose,
+        units_from=obj.fasting_glucose_units,
+        units_to=MILLIMOLES_PER_LITER,
+    )
+
+    obj.converted_ogtt_two_hr = convert_units(
+        obj.ogtt_two_hr, units_from=obj.ogtt_two_hr_units, units_to=MILLIMOLES_PER_LITER
+    )
 
     obj.calculated_bmi = calculate_bmi(obj)
 
