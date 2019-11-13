@@ -48,7 +48,8 @@ class MetaTestCaseMixin(SiteTestCaseMixin):
             RandomizationListImporter(verbose=False)
         import_holidays(test=True)
         site_list_data.autodiscover()
-        update_group_permissions(codenames_by_group=codenames_by_group, verbose=False)
+        update_group_permissions(
+            codenames_by_group=codenames_by_group, verbose=False)
 
     @classmethod
     def tearDownClass(cls):
@@ -56,7 +57,8 @@ class MetaTestCaseMixin(SiteTestCaseMixin):
         RandomizationList.objects.all().delete()
         Holiday.objects.all().delete()
 
-    def get_subject_screening(self):
+    def get_subject_screening(self, screening_datetime=None,
+                              eligibility_datetime=None):
         part_one = ScreeningPartOne.objects.create(
             user_created="erikvw", user_modified="erikvw", **part_one_eligible_options
         )

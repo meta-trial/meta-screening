@@ -56,6 +56,9 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
         "report_datetime",
         "part_three_report_datetime",
         "gender",
+        "eligible",
+        "consented",
+        "refused",
         "eligible_part_one",
         "eligible_part_two",
         "eligible_part_three",
@@ -66,12 +69,14 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
         "subject_identifier",
         "hospital_identifier",
         "initials",
+        "reasons_ineligible",
     )
 
     readonly_fields = (
         # calculated values
         "calculated_bmi",
         "calculated_egfr",
+        "converted_fasting_glucose",
         "converted_creatinine",
         "converted_ogtt_two_hr",
         "inclusion_a",
@@ -143,5 +148,6 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
                 label=label,
             )
         else:
-            context = dict(title=_("Go to subject dashboard"), url=url, label=label)
+            context = dict(title=_("Go to subject dashboard"),
+                           url=url, label=label)
         return render_to_string("dashboard_button.html", context=context)
