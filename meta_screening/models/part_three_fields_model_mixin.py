@@ -5,10 +5,13 @@ from edc_constants.choices import YES_NO, NO
 from edc_model.models import BloodPressureModelMixin
 from edc_model.validators import hm_validator
 
-from ..choices import GLUCOSE_UNITS, SERUM_CREATININE_UNITS
+from ..choices import GLUCOSE_UNITS
+from .creatinine_fields_model_mixin import CreatinineModelFieldsMixin
 
 
-class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
+class PartThreeFieldsModelMixin(
+    BloodPressureModelMixin, CreatinineModelFieldsMixin, models.Model
+):
 
     part_three_report_datetime = models.DateTimeField(
         verbose_name="Second stage report date and time",
@@ -105,22 +108,6 @@ class PartThreeFieldsModelMixin(BloodPressureModelMixin, models.Model):
         choices=YES_NO,
         default=NO,
         help_text="",
-    )
-
-    creatinine = models.DecimalField(
-        verbose_name=mark_safe("Creatinine <u>level</u>"),
-        max_digits=8,
-        decimal_places=2,
-        null=True,
-        blank=True,
-    )
-
-    creatinine_units = models.CharField(
-        verbose_name="Units (creatinine)",
-        max_length=15,
-        choices=SERUM_CREATININE_UNITS,
-        null=True,
-        blank=True,
     )
 
     # IFG
