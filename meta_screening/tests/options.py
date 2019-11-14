@@ -27,7 +27,6 @@ part_one_eligible_options = dict(
     continue_part_two=YES,
 )
 
-
 part_two_eligible_options = dict(
     part_two_report_datetime=now,
     acute_condition=NO,
@@ -58,6 +57,7 @@ part_three_eligible_options = dict(
     fasted=YES,
     fasted_duration_str="8h",
     fasting_glucose=7.0,
+    fasting_glucose_units=MILLIMOLES_PER_LITER,
     fasting_glucose_datetime=tomorrow,
     ogtt_base_datetime=tomorrow + relativedelta(minutes=5),
     ogtt_two_hr=7.5,

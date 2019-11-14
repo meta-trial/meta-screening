@@ -70,6 +70,18 @@ class TestScreeningPartThree(TestCase):
         obj.save()
         self.assertEqual(obj.eligible_part_three, YES)
 
+    def test_eligible_datetime_on_resave(self):
+        obj = ScreeningPartThree.objects.get(
+            screening_identifier=self.screening_identifier
+        )
+        for k, v in part_three_eligible_options.items():
+            setattr(obj, k, v)
+        obj.save()
+
+        eligibility_datetime = obj.eligibility_datetime
+        obj.save()
+        self.assertNotEqual(eligibility_datetime, obj.eligibility_datetime)
+
     def test_eligible2(self):
 
         obj = ScreeningPartThree.objects.get(
