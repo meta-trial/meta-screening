@@ -6,33 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('meta_screening', '0014_auto_20191107_0528'),
+        ("meta_screening", "0014_auto_20191107_0528"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='historicalscreeningpartone',
-            name='refused',
+            model_name="historicalscreeningpartone",
+            name="refused",
             field=models.BooleanField(default=False, editable=False),
         ),
         migrations.AddField(
-            model_name='historicalscreeningpartthree',
-            name='refused',
+            model_name="historicalscreeningpartthree",
+            name="refused",
             field=models.BooleanField(default=False, editable=False),
         ),
         migrations.AddField(
-            model_name='historicalscreeningparttwo',
-            name='refused',
+            model_name="historicalscreeningparttwo",
+            name="refused",
             field=models.BooleanField(default=False, editable=False),
         ),
         migrations.AddField(
-            model_name='historicalsubjectscreening',
-            name='refused',
+            model_name="historicalsubjectscreening",
+            name="refused",
             field=models.BooleanField(default=False, editable=False),
         ),
         migrations.AddField(
-            model_name='subjectscreening',
-            name='refused',
+            model_name="subjectscreening",
+            name="refused",
             field=models.BooleanField(default=False, editable=False),
         ),
     ]

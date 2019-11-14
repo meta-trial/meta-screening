@@ -148,6 +148,5 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
                 label=label,
             )
         else:
-            context = dict(title=_("Go to subject dashboard"),
-                           url=url, label=label)
+            context = dict(title=_("Go to subject dashboard"), url=url, label=label)
         return render_to_string("dashboard_button.html", context=context)
