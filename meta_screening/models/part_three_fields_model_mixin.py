@@ -2,6 +2,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.safestring import mark_safe
 from edc_constants.choices import YES_NO, NO
+from edc_lab.choices import RESULT_QUANTIFIER
+from edc_lab.constants import EQ
 from edc_model.models import BloodPressureModelMixin
 from edc_model.validators import hm_validator
 
@@ -119,6 +121,10 @@ class PartThreeFieldsModelMixin(
         blank=True,
     )
 
+    fasting_glucose_quantifier = models.CharField(
+        max_length=10, choices=RESULT_QUANTIFIER, default=EQ,
+    )
+
     fasting_glucose_units = models.CharField(
         verbose_name="Units (fasting glucose)",
         max_length=15,
@@ -148,6 +154,10 @@ class PartThreeFieldsModelMixin(
         decimal_places=2,
         null=True,
         blank=True,
+    )
+
+    ogtt_two_hr_quantifier = models.CharField(
+        max_length=10, choices=RESULT_QUANTIFIER, default=EQ,
     )
 
     ogtt_two_hr_units = models.CharField(
