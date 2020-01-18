@@ -43,7 +43,7 @@ class PartThreeFieldsModelMixin(
         blank=True,
         max_digits=8,
         decimal_places=2,
-        validators=[MinValueValidator(15), MaxValueValidator(135)],
+        validators=[MinValueValidator(15), MaxValueValidator(200)],
         help_text="in kgs",
     )
 
@@ -134,7 +134,8 @@ class PartThreeFieldsModelMixin(
     )
 
     fasting_glucose_datetime = models.DateTimeField(
-        verbose_name=mark_safe("<u>Time</u> fasting glucose <u>level</u> measured"),
+        verbose_name=mark_safe(
+            "<u>Time</u> fasting glucose <u>level</u> measured"),
         null=True,
         blank=True,
     )
