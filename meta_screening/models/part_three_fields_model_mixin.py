@@ -4,16 +4,14 @@ from django.utils.safestring import mark_safe
 from edc_constants.choices import YES_NO, NO
 from edc_lab.choices import RESULT_QUANTIFIER
 from edc_lab.constants import EQ
-from edc_model.models import BloodPressureModelMixin
+from edc_model import models as edc_models
 from edc_model.validators import hm_validator
 
 from ..choices import GLUCOSE_UNITS
 from .creatinine_fields_model_mixin import CreatinineModelFieldsMixin
 
 
-class PartThreeFieldsModelMixin(
-    BloodPressureModelMixin, CreatinineModelFieldsMixin, models.Model
-):
+class PartThreeFieldsModelMixin(CreatinineModelFieldsMixin, models.Model):
 
     part_three_report_datetime = models.DateTimeField(
         verbose_name="Second stage report date and time",
@@ -22,39 +20,13 @@ class PartThreeFieldsModelMixin(
         help_text="Date and time of report.",
     )
 
-    sys_blood_pressure = models.IntegerField(
-        verbose_name="Blood pressure: systolic",
-        validators=[MinValueValidator(50), MaxValueValidator(220)],
-        null=True,
-        blank=True,
-        help_text="in mm. format SYS, e.g. 120",
-    )
+    sys_blood_pressure = edc_models.SystolicPressureField(null=True, blank=True,)
 
-    dia_blood_pressure = models.IntegerField(
-        verbose_name="Blood pressure: diastolic",
-        validators=[MinValueValidator(20), MaxValueValidator(150)],
-        null=True,
-        blank=True,
-        help_text="in Hg. format DIA, e.g. 80",
-    )
+    dia_blood_pressure = edc_models.DiastolicPressureField(null=True, blank=True,)
 
-    weight = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=8,
-        decimal_places=2,
-        validators=[MinValueValidator(15), MaxValueValidator(135)],
-        help_text="in kgs",
-    )
+    weight = edc_models.WeightField(null=True, blank=True)
 
-    height = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=5,
-        decimal_places=1,
-        validators=[MinValueValidator(100.0), MaxValueValidator(230.0)],
-        help_text="in centimeters",
-    )
+    height = edc_models.HeightField(null=True, blank=True)
 
     waist_circumference = models.DecimalField(
         verbose_name="Waist circumference",
