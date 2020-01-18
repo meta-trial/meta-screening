@@ -30,7 +30,6 @@ class SubjectScreening(
 ):
 
     identifier_cls = ScreeningIdentifier
-    consent_model = "meta_subject.subjectconsent"
 
     def save(self, *args, **kwargs):
         if self._meta.label_lower == "meta_screening.subjectscreening":
