@@ -113,6 +113,7 @@ class SubjectScreeningAdmin(ModelAdminSubjectDashboardMixin, SimpleHistoryAdmin)
         "selection_method": admin.VERTICAL,
         "staying_nearby": admin.VERTICAL,
         "tissue_hypoxia_condition": admin.VERTICAL,
+        "unsuitable_agreed": admin.VERTICAL,
         "unsuitable_for_study": admin.VERTICAL,
         "urine_bhcg": admin.VERTICAL,
         "urine_bhcg_performed": admin.VERTICAL,
