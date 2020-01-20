@@ -77,6 +77,18 @@ class ScreeningPartThreeFormValidator(FormValidator):
             YES, field="unsuitable_for_study", field_required="reasons_unsuitable"
         )
 
+        self.applicable_if(
+            YES, field="unsuitable_for_study", field_applicable="unsuitable_agreed"
+        )
+
+        if self.cleaned_data.get("unsuitable_agreed") == NO:
+            raise forms.ValidationError(
+                {
+                    "unsuitable_agreed": "The study coordinator MUST agree with your assessment. "
+                    "Please discuss before continuing."
+                }
+            )
+
     def validate_ogtt_dates(self):
         if self.cleaned_data.get("ogtt_base_datetime") and self.cleaned_data.get(
             "ogtt_two_hr_datetime"

@@ -11,6 +11,7 @@ from ..forms import (
 from ..models import ScreeningPartThree
 from .fieldsets import (
     calculated_values_fieldset,
+    comments_fieldset,
     get_part_one_fieldset,
     get_part_two_fieldset,
     get_part_three_glucose_fieldset,
@@ -33,6 +34,7 @@ class ScreeningPartThreeAdmin(SubjectScreeningAdmin):
         get_part_three_other_fieldset(),
         get_part_three_vitals_fieldset(),
         get_part_three_pregnancy_fieldset(),
+        comments_fieldset,
         calculated_values_fieldset,
         audit_fieldset_tuple,
     )

@@ -1,6 +1,7 @@
 from .field_lists import (
     part_one_fields,
     part_two_fields,
+    part_three_comment_fields,
     part_three_fields,
     part_three_glucose_fields,
     part_three_vitals_fields,

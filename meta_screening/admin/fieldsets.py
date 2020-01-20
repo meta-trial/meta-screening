@@ -2,14 +2,14 @@ from django.utils.safestring import mark_safe
 
 from ..forms import (
     part_one_fields,
-    part_two_fields,
+    part_three_comment_fields,
     part_three_fields,
     part_three_glucose_fields,
-    part_three_vitals_fields,
     part_three_other_fields,
     part_three_pregnancy_fields,
+    part_three_vitals_fields,
+    part_two_fields,
 )
-from copy import copy
 
 
 def get_part_one_fieldset(collapse=None):
@@ -76,6 +76,11 @@ def get_part_three_pregnancy_fieldset(collapse=None):
         dct.update(classes=("collapse",))
     return ("Part 3d: Pregnancy", dct)
 
+
+comments_fieldset = (
+    "Additional Comments",
+    {"fields": (*part_three_comment_fields,),},
+)
 
 calculated_values_fieldset = (
     "Calculated values",

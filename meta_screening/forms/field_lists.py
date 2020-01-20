@@ -62,11 +62,18 @@ part_three_other_fields = (
     "hba1c",
 )
 
+part_three_comment_fields = (
+    "unsuitable_for_study",
+    "reasons_unsuitable",
+    "unsuitable_agreed",
+)
+
 part_three_fields = (
     *part_three_glucose_fields,
     *part_three_other_fields,
     *part_three_vitals_fields,
     *part_three_pregnancy_fields,
+    *part_three_comment_fields,
 )
 
 
