@@ -4,9 +4,13 @@ from edc_reportable import (
     MICROMOLES_PER_LITER,
     MICROMOLES_PER_LITER_DISPLAY,
 )
-from edc_constants.constants import BLACK, OTHER, NOT_APPLICABLE, YES, NO
-
-from .constants import PURPOSIVELY_SELECTED, RANDOM_SAMPLING
+from edc_constants.constants import (
+    BLACK,
+    OTHER,
+    NOT_APPLICABLE,
+    YES,
+    NO,
+)
 
 
 ETHNICITY = ((BLACK, "Black"), (OTHER, "Other"))
@@ -23,11 +27,6 @@ REFUSAL_REASONS = (
     ("dont_want_to_join", "I don't want to take part"),
     ("need_to_think_about_it", "I haven't had a chance to think about it"),
     (OTHER, "Other, please specify"),
-)
-
-SELECTION_METHOD = (
-    (RANDOM_SAMPLING, "Random sampling"),
-    (PURPOSIVELY_SELECTED, "Purposively selected"),
 )
 
 SERUM_CREATININE_UNITS = (
