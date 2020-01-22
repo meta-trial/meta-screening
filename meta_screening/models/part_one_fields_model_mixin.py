@@ -6,10 +6,15 @@ from django.core.validators import (
 from django.db import models
 from django.utils.safestring import mark_safe
 from django_crypto_fields.fields import EncryptedCharField
-from edc_constants.choices import YES_NO, YES_NO_NA, YESDEFAULT_NO
+from edc_constants.choices import (
+    YES_NO,
+    YES_NO_NA,
+    YESDEFAULT_NO,
+    SELECTION_METHOD,
+)
 from edc_constants.constants import YES
 
-from ..choices import ETHNICITY, SELECTION_METHOD
+from ..choices import ETHNICITY
 from ..constants import PREG_YES_NO_NA
 
 

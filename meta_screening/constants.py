@@ -14,6 +14,4 @@ PREG_YES_NO_NA = (
     (NOT_APPLICABLE, "Not Applicable: e.g. mentruating, post menopausal, not female"),
 )
 
-PURPOSIVELY_SELECTED = "purposively_selected"
-RANDOM_SAMPLING = "random_sampling"
 CONVERSION_FACTOR = 18.018018
